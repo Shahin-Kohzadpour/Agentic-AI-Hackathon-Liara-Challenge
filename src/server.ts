@@ -5,6 +5,7 @@ import { resolve,join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import { Core,failingInput } from './core.ts';
+import { LiveOperator } from './live.ts';
 import { id,equals,messageOf } from './security.ts';
 import { claimOwner } from './owner.ts';
 
@@ -16,6 +17,9 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
   const port=options.port??Number(process.env.PORT||4317);
   const origin=`http://127.0.0.1:${port}`;
   core.localOrigin=origin;
+  const live=new LiveOperator(core,()=>core.localOrigin??origin);
+  app.addHook('onClose',async()=>{await live.stop();});
+  let liveStreams=0;
   const sessions=new Map<string,{csrf:string;expires:number}>();
   const capability=async(name:string)=>{const path=join(core.data,name);try{return (await readFile(path,'utf8')).trim();}catch{const key=id('cap')+id('secret');await writeFile(path,key,{mode:0o600});return key;}};
   const humanKey=await capability('human-key'),toolKey=await capability('mcp-key');
@@ -48,7 +52,43 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
     return {csrf};
   });
   app.get('/api/session',async(request,reply)=>{const s=sessionOf(request);return s?{csrf:s.csrf}:reply.code(401).send({error:'نشست خصوصی لازم است.'});});
-  app.get('/api/state',async()=>core.state());
+  app.get('/api/state',async()=>{const state=core.state();return {...state,capabilities:{...state.capabilities,liveConsole:Boolean(process.env.LIARA_CONSOLE_EMAIL&&process.env.LIARA_CONSOLE_PASSWORD)}};});
+  app.get('/api/live/state',async()=>({live:live.snapshot(),configured:{console:Boolean(process.env.LIARA_CONSOLE_EMAIL&&process.env.LIARA_CONSOLE_PASSWORD),browser:process.env.LIVE_CHROMIUM||'/usr/bin/chromium'}}));
+  app.post('/api/live/start',async(request,reply)=>{
+    const {projectId}=z.object({projectId:z.string()}).parse(request.body);
+    const project=core.project(projectId);
+    const snapshot=await live.start(projectId,{onReproduced:async()=>{
+      const latest=core.state().incidents.find(run=>run.projectId===projectId);
+      // Reuse only an incident that is still moving; a resolved or rejected one is history.
+      if(latest&&['collecting','patching','testing','awaiting_approval','deploying','verifying'].includes(latest.status))return latest.id;
+      const text='سایت باز می‌شود، اما خلاصهٔ سفارش خطای ۵۰۰ دارد. علت را پیدا کن و اصلاح را برای تأیید من آماده کن.';
+      try{return (await core.startIncident(projectId,text)).id;}catch(error){core.store.event('live','failed',messageOf(error));return undefined;}
+    }});
+    return reply.code(202).send({live:snapshot});
+  });
+  app.post('/api/live/stop',async()=>({live:await live.stop()}));
+  app.post('/api/live/verify',async()=>({live:await live.verify()}));
+  app.get('/api/live/stream',async(request,reply)=>{
+    if(!sessionOf(request))return reply.code(401).send({error:'نشست خصوصی لازم است.'});
+    if(liveStreams>=4)return reply.code(429).send({error:'تعداد نمایش زندهٔ هم‌زمان بیش از حد است.'});
+    reply.hijack();liveStreams++;
+    reply.raw.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-store','connection':'keep-alive','X-Content-Type-Options':'nosniff'});
+    reply.raw.write(': live\n\n');
+    const send=(event:string,payload:unknown)=>reply.raw.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`);
+    const unsubscribe=live.subscribe(send);
+    const heartbeat=setInterval(()=>reply.raw.write(': heartbeat\n\n'),12000);
+    request.raw.on('close',()=>{clearInterval(heartbeat);unsubscribe();liveStreams--;});
+  });
+  app.get('/api/live/mjpeg',async(request,reply)=>{
+    // Native multipart frames keep the viewer stable; the browser replaces one image instead of decoding a new data URL per frame.
+    if(!sessionOf(request))return reply.code(401).send({error:'نشست خصوصی لازم است.'});
+    if(liveStreams>=4)return reply.code(429).send({error:'تعداد نمایش زندهٔ هم‌زمان بیش از حد است.'});
+    reply.hijack();liveStreams++;let closed=false;
+    reply.raw.writeHead(200,{'content-type':'multipart/x-mixed-replace; boundary=frame','cache-control':'no-store','connection':'close','X-Content-Type-Options':'nosniff'});
+    const write=(jpeg:Buffer)=>{if(closed||reply.raw.writableEnded)return;try{reply.raw.write(`--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.length}\r\n\r\n`);reply.raw.write(jpeg);reply.raw.write('\r\n');}catch{closed=true;}};
+    const unsubscribe=live.subscribeFrames(write);
+    request.raw.on('close',()=>{if(closed)return;closed=true;unsubscribe();liveStreams--;});
+  });
   app.post('/api/diagnostics',async request=>core.collect(z.object({projectId:z.string()}).parse(request.body).projectId));
   app.post('/api/incidents',async(request,reply)=>{const input=z.object({projectId:z.string(),request:z.string().min(5).max(2000)}).parse(request.body);return reply.code(202).send(await core.startIncident(input.projectId,input.request));});
   app.post('/api/incidents/:id/verify',async(request,reply)=>{const {id:runId}=z.object({id:z.string()}).parse(request.params);core.track(core.reverify(runId).catch(()=>{}));return reply.code(202).send({runId,status:'verifying'});});

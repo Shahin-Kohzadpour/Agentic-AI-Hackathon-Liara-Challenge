@@ -12,7 +12,9 @@ import type { ActionPlan,Evidence,Incident,Project,RunStatus,Verification } from
 export const failingInput={items:[{price:100,quantity:2}]};
 export class Core {
   localOrigin?:string;
-  verificationPolicy={attempts:12,delayMs:1500,successes:2};
+  // Edge routing can keep serving the previous release after READY for tens of seconds;
+  // a short window would mark a correct repair as failed. Two consecutive successes are required.
+  verificationPolicy={attempts:45,delayMs:2000,successes:2};
   readonly store:Store; readonly snapshots:Snapshots;readonly runner:IsolatedRunner;readonly liara:Liara;
   private agent:RepairAgent; private jobs=new Set<Promise<unknown>>();
   constructor(readonly root:string,readonly data=join(root,'.data'),agent?:RepairAgent){
@@ -150,12 +152,14 @@ export class Core {
       }
       p.currentSnapshot=a.snapshotId;p.revision++;if(p.mode==='liara')p.remoteRelease=releaseId;this.store.put('projects',p);
       if(run){run.releaseId=releaseId;this.event(run,'verifying','درخواست کاربردی و قرارداد پاسخ روی نسخهٔ منتشرشده دوباره بررسی می‌شوند.');}
-      const verification=await this.verifyPublished(p,run);
+      // The approved source decides the expected live contract: a deliberately faulty seed must
+      // actually answer 500 before its deployment counts, instead of inheriting the predecessor's 200.
+      const expectation=!run&&a.kind!=='restart'&&!(await this.runner.verify(this.snapshots.path(a.snapshotId))).passed?'faulty':'healthy';
+      const verification=await this.verifyPublished(p,run,expectation);
       a.result={...(a.result as object??{}),releaseId,verification};
       if(run){run.verification=verification;this.save(run);}
-      // Initial deliberately faulty demo deployments are labeled as faulty, never as recovery.
-      const intentionalDemoDefect=!run&&a.kind==='deploy'&&verification.checks.length>=3&&
-        (verification.checks[0].actual as {status?:number}).status===500&&verification.checks.slice(1).filter(c=>!c.name.includes('بدون فیلد')&&!c.name.includes('حالت نگه‌داشته‌شده: دو آیتم')).every(c=>c.passed);
+      // An intentionally faulty seed is labeled as faulty, never as recovery.
+      const intentionalDemoDefect=expectation==='faulty'&&verification.matched===true;
       if(!verification.passed&&!intentionalDemoDefect)throw new Error('بررسی کاربردی پس از انتشار ناموفق بود. وضعیت آمادهٔ زیرساخت به معنی موفقیت برنامه نیست.');
       a.status='succeeded';this.store.put('actions',a);
       if(run)this.event(run,'resolved','رفع خطا با اجرای دوبارهٔ درخواست و بررسی قرارداد پاسخ تأیید شد.');
@@ -174,21 +178,25 @@ export class Core {
     const contract=await this.runner.verify(this.snapshots.path(p.currentSnapshot));
     return {passed:actualResult.status===200&&JSON.stringify(actualResult.body)===JSON.stringify(expected.body)&&contract.passed,checks:[{name:'اجرای دوبارهٔ درخواست اصلی',passed:actualResult.status===200&&JSON.stringify(actualResult.body)===JSON.stringify(expected.body),expected,actual},...contract.checks],durationMs:Date.now()-start,source:this.localOrigin?'http':'isolated-contract-tests'};
   }
-  async verifyPublished(p:Project,run?:Incident):Promise<Verification>{
+  async verifyPublished(p:Project,run?:Incident,expectation:'healthy'|'faulty'='healthy'):Promise<Verification>{
     if(p.mode==='local')return this.verifyLocalHttp(p);
     const start=Date.now();
     let consecutive=0,result:Verification|undefined;
+    // The edge can keep serving the previous release for tens of seconds after READY, so the
+    // observed contract must match what the approved source actually does. Otherwise a deploy
+    // of the faulty seed would be called finished while the healthy predecessor still answers.
+    const matches=(v:Verification)=>expectation==='faulty'
+      ? (v.checks[0]?.actual as {status?:number})?.status===500&&v.checks.slice(1).every(c=>c.passed)
+      : v.passed;
     for(let attempt=0;attempt<this.verificationPolicy.attempts;attempt++){
       if(p.remoteRelease&&await this.liara.currentRelease(p.name)!==p.remoteRelease)throw new Error('نسخهٔ زنده هنگام بررسی نتیجه تغییر کرده است.');
       result=await this.liara.verifyHttp(p.name);
-      consecutive=result.passed?consecutive+1:0;
-      if(consecutive>=this.verificationPolicy.successes)return {...result,durationMs:Date.now()-start};
-      // An intentionally faulty seed has its own exact acceptance contract, not a generic success bypass.
-      if(!run&&(result.checks[0]?.actual as {status?:number})?.status===500&&result.checks.slice(1).every(c=>c.passed))return {...result,durationMs:Date.now()-start};
-      if(run)this.store.event(run.id,'verifying',`بررسی کاربردی نوبت ${attempt+1}؛ ثبات پاسخ پس از انتشار هنوز تأیید نشده است.`);
+      consecutive=matches(result)?consecutive+1:0;
+      if(consecutive>=this.verificationPolicy.successes)return {...result,durationMs:Date.now()-start,matched:true,passed:expectation==='healthy'?result.passed:false};
+      if(run)this.store.event(run.id,'verifying',`بررسی کاربردی نوبت ${attempt+1}؛ ${expectation==='faulty'?'نسخهٔ معیوب هنوز پاسخ نمی‌دهد':'ثبات پاسخ پس از انتشار هنوز تأیید نشده است.'}`);
       if(attempt+1<this.verificationPolicy.attempts)await new Promise(resolve=>setTimeout(resolve,this.verificationPolicy.delayMs));
     }
-    if(result&&consecutive<this.verificationPolicy.successes)return {...result,durationMs:Date.now()-start,passed:false,checks:[...result.checks,{name:'ثبات پاسخ در بررسی‌های متوالی',passed:false,expected:{consecutive:this.verificationPolicy.successes},actual:{consecutive}}]};
+    if(result&&consecutive<this.verificationPolicy.successes)return {...result,durationMs:Date.now()-start,passed:false,matched:false,checks:[...result.checks,{name:'ثبات پاسخ در بررسی‌های متوالی',passed:false,expected:{consecutive:this.verificationPolicy.successes},actual:{consecutive}}]};
     throw new Error('نتیجهٔ بررسی در دسترس نیست.');
   }
   async reverify(runId:string){

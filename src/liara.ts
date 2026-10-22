@@ -92,7 +92,9 @@ export class Liara {
       const result=await command(process.execPath,args,{cwd:snapshotPath,env,timeout:240000,limit:150000});
       if(result.code!==0)throw new Error(`CLI استقرار را تأیید نکرد. ${String(redact(result.stderr||result.stdout)).slice(-1800)}`);
       // Never treat a CLI exit code as proof that a new ready release exists.
-      for(let i=0;i<25;i++){
+      // A release can stay PENDING behind a slow regional build for minutes; do not
+      // declare the deployment unknown while the platform is still rolling it out.
+      for(let i=0;i<90;i++){
         const releases=await this.request(`/v1/projects/${name}/releases`);
         const current=releases.currentRelease;
         const entry=releases.releases?.find((r:any)=>r._id===current);

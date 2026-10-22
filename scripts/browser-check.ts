@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 const port=Number(process.env.PORT||4317),origin=`http://127.0.0.1:${port}`;
 const key=(await readFile('.data/human-key','utf8')).trim();
 await mkdir('artifacts',{recursive:true});
-const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
+// The host has a large /dev/shm; Chromium's fallback compositor buffers in /tmp caused renderer crashes.
+const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox'],ignoreDefaultArgs:['--disable-dev-shm-usage']});
 let repairInvoked=false,preparedRepairUsed=false;
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1080},deviceScaleFactor:1});

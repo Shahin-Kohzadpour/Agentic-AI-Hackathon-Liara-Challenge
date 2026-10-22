@@ -98,6 +98,30 @@ test('tampered action digest cannot execute',async()=>{
  await assert.rejects(c.execute(a.id),/digest/);assert.equal(c.project('local').revision,1);
 });
 
+test('faulty seed is not reported deployed while the edge still serves the healthy predecessor',async()=>{
+ const c=await setup();const p=c.project('local');p.mode='liara';p.name='test-sample';p.remoteRelease='before';c.store.put('projects',p);
+ c.verificationPolicy={attempts:3,delayMs:0,successes:2};
+ let remote='before';c.liara.currentRelease=async()=>remote;c.liara.deploy=async()=>{remote='after';return {releaseId:'after',output:'READY'}};
+ c.liara.verifyHttp=async()=>({passed:true,source:'http',durationMs:1,checks:[{name:'request',passed:true,expected:{status:200},actual:{status:200}}]});
+ const a=await c.prepareAction(p.id,'deploy');c.decide(a.id,'approve');
+ await assert.rejects(c.execute(a.id),/ناموفق/);assert.equal(c.action(a.id).status,'failed');
+});
+
+test('faulty seed deploy completes only once the live 500 contract is observed',async()=>{
+ const c=await setup();const p=c.project('local');p.mode='liara';p.name='test-sample';p.remoteRelease='before';c.store.put('projects',p);
+ c.verificationPolicy={attempts:6,delayMs:0,successes:2};
+ let remote='before',probes=0;
+ c.liara.currentRelease=async()=>remote;c.liara.deploy=async()=>{remote='after';return {releaseId:'after',output:'READY'}};
+ const ok={name:'passed',passed:true,expected:{status:200},actual:{status:200}};
+ c.liara.verifyHttp=async()=>{probes++;return probes<=2
+  ?{passed:true,source:'http',durationMs:1,checks:[ok,ok,ok]}
+  :{passed:false,source:'http',durationMs:1,checks:[{name:'main',passed:false,expected:{status:200},actual:{status:500}},ok,ok]};};
+ const a=await c.prepareAction(p.id,'deploy');c.decide(a.id,'approve');
+ const done=await c.execute(a.id);
+ assert.equal(done.status,'succeeded');assert.equal((done.result as any).verification.matched,true);assert.equal((done.result as any).verification.passed,false);
+ assert.ok(probes>=4,'verification accepted the predecessor release too early');assert.equal(c.project(p.id).revision,2);
+});
+
 test('live reset is explicitly labeled as an intentional faulty deployment',async()=>{
  const c=await setup();const p=c.project('local');p.mode='liara';p.name='test-sample';p.remoteRelease='before';c.store.put('projects',p);c.liara.currentRelease=async()=>'before';
  const a=await c.resetProposal('local');assert.match(a.title,/معیوب/);assert.match(a.risk,/عمداً/);

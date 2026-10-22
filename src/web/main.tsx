@@ -1,10 +1,12 @@
 import React,{useEffect,useState,useCallback} from 'react';
 import { createRoot } from 'react-dom/client';
-import { ShieldCheck,Activity,Layers,ArrowUpLeft,ChevronLeft,Check,CheckCheck,Clock3,Code2,FileText,ExternalLink,GitBranch,LoaderCircle,LockKeyhole,RefreshCw,Search,Server,Shield,Terminal,TriangleAlert,X,Download,Radio,ArrowLeft,Workflow,Cloud,FlaskConical,Link2,Send,Eye } from 'lucide-react';
+import { ShieldCheck,Activity,Layers,ArrowUpLeft,ChevronLeft,Check,CheckCheck,Clock3,Code2,FileText,ExternalLink,GitBranch,LoaderCircle,LockKeyhole,RefreshCw,Search,Server,Shield,Terminal,TriangleAlert,X,Download,Radio,ArrowLeft,Workflow,Cloud,FlaskConical,Link2,Send,Eye,MonitorPlay,Play,Square } from 'lucide-react';
 import type { Project,Incident,ActionPlan,Evidence,RunEvent } from '../types.ts';
+import type { LiveSnapshot } from '../live.ts';
 import './style.css';
 
-type State={projects:Project[];incidents:Incident[];actions:ActionPlan[];events:RunEvent[];capabilities:{liaraConfigured:boolean;teamConfigured:boolean;agent:string;scope:string}};
+type State={projects:Project[];incidents:Incident[];actions:ActionPlan[];events:RunEvent[];capabilities:{liaraConfigured:boolean;teamConfigured:boolean;agent:string;scope:string;liveConsole?:boolean}};
+const liveLabels:Record<string,string>={idle:'آمادهٔ شروع',running:'در حال اجرا',awaiting_fix:'در انتظار اصلاح',verifying:'بررسی زنده',verified:'بررسی زنده موفق',failed:'متوقف با خطا',stopped:'متوقف'};
 const labels:Record<string,string>={collecting:'جمع‌آوری شواهد',patching:'آماده‌سازی اصلاح',testing:'آزمون مستقل',awaiting_approval:'منتظر تأیید شما',deploying:'انتشار نسخه',verifying:'بررسی نتیجه',resolved:'رفع خطا تأیید شد',failed:'نیازمند بررسی',rejected:'انتشار لغو شد'};
 const number=(value:number)=>value.toLocaleString('fa-IR');
 const time=(value:string)=>new Date(value).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
@@ -51,7 +53,7 @@ function App(){
       <a className="brand" href="/" aria-label="نگهبان"><div className="brand-mark"><ShieldCheck size={27}/></div><div><b>نگهبان<span className="brand-dot">.</span></b><small>همکار استقرار و بازیابی</small></div></a>
       <div className="workspace-label">فضای کار <span className="tiny-tag">MVP</span></div>
       <nav>
-        {[['overview','اتاق عملیات',Activity],['evidence','شواهد و تشخیص',Search],['report','گزارش بازیابی',FileText]].map(([name,label,Icon])=>{const Component=Icon as typeof Activity;return <button key={String(name)} className={view===name?'nav active':'nav'} onClick={()=>setView(String(name))}><Component size={19}/>{String(label)}{view===name&&<ChevronLeft size={15}/>}</button>;})}
+        {[['overview','اتاق عملیات',Activity],['live','اتاق زنده',MonitorPlay],['evidence','شواهد و تشخیص',Search],['report','گزارش بازیابی',FileText]].map(([name,label,Icon])=>{const Component=Icon as typeof Activity;return <button key={String(name)} className={view===name?'nav active':'nav'} onClick={()=>setView(String(name))}><Component size={19}/>{String(label)}{view===name&&<ChevronLeft size={15}/>}</button>;})}
       </nav>
       <div className="sidebar-divider"/>
       <div className="workspace-label">پروژه‌های ثبت‌شده <span>{number(state?.projects.length??0)}</span></div>
@@ -62,7 +64,7 @@ function App(){
     <div className="main-shell">
       <header className="topbar"><div className="breadcrumb"><Layers size={16}/><span>فضای کار</span><ChevronLeft size={13}/><b>{project?.mode==='liara'?'تیم لیارا':'محیط تمرین'}</b></div><div className="topbar-right"><span className="small-pill"><Shield size={13}/> تأیید انسانی فعال</span><span className="avatar">ن</span></div></header>
       <main className="content">
-        <div className="page-heading"><div><div className="eyebrow">DEPLOY. DIAGNOSE. RECOVER.</div><h1>{view==='evidence'?'هر تشخیص، با یک شاهد.':view==='report'?'بازیابی، با نتیجهٔ قابل‌بررسی.':'از خطا تا اطمینان.'}</h1><p>انتشار، تشخیص و اصلاح؛ در یک جریان روشن و با کنترل شما.</p></div><a className="secondary demo-link" href={project?.mode==='liara'?'/demo?target=liara':'/demo'} target="_blank" rel="noreferrer">مشاهدهٔ برنامه <ArrowUpLeft size={17}/></a></div>
+        <div className="page-heading"><div><div className="eyebrow">DEPLOY. DIAGNOSE. RECOVER.</div><h1>{view==='evidence'?'هر تشخیص، با یک شاهد.':view==='live'?'عامل، همین حالا در حال کار است.':view==='report'?'بازیابی، با نتیجهٔ قابل‌بررسی.':'از خطا تا اطمینان.'}</h1><p>{view==='live'?'مرورگر واقعی عامل را ببینید: ورود به کنسول لیارا، بازتولید خطا، انتشار اصلاح و بررسی دوباره.' :'انتشار، تشخیص و اصلاح؛ در یک جریان روشن و با کنترل شما.'}</p></div><a className="secondary demo-link" href={project?.mode==='liara'?'/demo?target=liara':'/demo'} target="_blank" rel="noreferrer">مشاهدهٔ برنامه <ArrowUpLeft size={17}/></a></div>
         {error&&<div className="alert error" role="alert"><TriangleAlert size={18}/><span>{error}</span><button aria-label="بستن خطا" onClick={()=>setError('')}><X size={17}/></button></div>}
         <div className={`environment-banner ${project?.mode==='liara'?'live':''}`}><span className="env-icon">{project?.mode==='liara'?<Cloud size={19}/>:<FlaskConical size={19}/>}</span><div><b>{project?.mode==='liara'?'پروژهٔ واقعی لیارا':'تمرین محلی؛ با اجرای واقعی کد'}</b><span>{project?.mode==='liara'?'عملیات این پروژه سرویس ابری را تغییر می‌دهد و به تأیید نیاز دارد.':'این اجرا منابع ابری را تغییر نمی‌دهد. شواهد، آزمون و اصلاح در محیط جدا اجرا می‌شوند.'}</span></div><span className="mode-label">{project?.mode==='liara'?'LIVE / LIARA':'LOCAL / ISOLATED'}</span></div>
         <section className="stats">
@@ -70,6 +72,8 @@ function App(){
           <div className="stat"><span className="stat-icon neutral"><CheckCheck size={20}/></span><div><span className="stat-label">آزمون‌های مستقل</span><b>{tests?<><span className={tests.passed?'good-text':'warning-text'}>{number(tests.checks.filter(c=>c.passed).length)}</span><span className="stat-of"> / {number(tests.checks.length)}</span></>:'هنوز اجرا نشده'}</b><small>{tests?'نتیجهٔ واقعی آزمون‌های قرارداد پاسخ':'شامل ورودی‌های معتبر و نامعتبر'}</small></div></div>
           <div className="stat"><span className="stat-icon neutral"><GitBranch size={20}/></span><div><span className="stat-label">نسخهٔ ثبت‌شدهٔ پروژه</span><b className="mono" dir="ltr">{project?.remoteRelease?project.remoteRelease.slice(-12):`revision ${project?.revision??'—'}`}</b><small>تطبیق منبع با نسخه، پیش از انتشار</small></div></div>
         </section>
+
+        {view==='live'&&<LiveRoom project={project} incident={incident} csrf={csrf} consoleConfigured={state?.capabilities.liveConsole} onOpenApproval={()=>setView('overview')}/>}
 
         {view==='overview'&&<>
           <section className="request-card"><div className="section-top"><div className="section-title"><span className="icon-circle"><Workflow size={20}/></span><div><h2>چه مشکلی پیش آمده؟</h2><p>مسئله را توضیح دهید؛ بررسی و آماده‌سازی اصلاح با نگهبان.</p></div></div><span className="tag"><span className="dot mint"/> اصلاح با Codex</span></div><label className="sr-only" htmlFor="request">شرح مشکل</label><textarea id="request" value={request} onChange={e=>setRequest(e.target.value)} rows={2}/><div className="request-bottom"><span><LockKeyhole size={14}/> بررسی و آماده‌سازی، بدون تغییر سرویس</span><button className="primary" disabled={Boolean(busy)||Boolean(active)||request.length<5} onClick={()=>void act('investigate',()=>api('/api/incidents',{projectId,request}))}>{active?<LoaderCircle size={17} className="spin"/>:<Search size={17}/>} {active?'در حال بررسی رخداد':'بررسی و آماده‌سازی اصلاح'} <ArrowLeft size={16}/></button></div></section>
@@ -99,5 +103,47 @@ function Approval({action,busy,onDecide}:{action:ActionPlan;busy:string;onDecide
 }
 function Diff({value}:{value:string}){return <pre className="diff" dir="ltr">{value.split('\n').map((line,i)=><span key={i} className={line.startsWith('+')?'added':line.startsWith('-')?'removed':''}>{line||' '}<br/></span>)}</pre>;}
 function EvidenceList({items,expanded=false}:{items:Evidence[];expanded?:boolean}){return items.length?<div className="evidence-list">{items.map(e=><details key={e.id} className="evidence-item"><summary><span className={e.available?'evidence-icon available':'evidence-icon'}>{e.available?<FileText size={16}/>:<Clock3 size={16}/>}</span><span><b>{e.title}</b><small>{e.available?'شاهد ثبت‌شده':'داده در دسترس نیست'} · {time(e.observedAt)}</small></span><ChevronLeft size={15}/></summary>{e.limitation&&<p>{e.limitation}</p>}<pre dir="ltr">{JSON.stringify(e.data,null,2)}</pre></details>)}</div>:<div className="evidence-empty"><Layers size={23}/><p>پس از بررسی، شواهد واقعی اینجا نمایش داده می‌شوند.</p></div>;}
+
+function LiveRoom({project,incident,csrf,consoleConfigured,onOpenApproval}:{project?:Project;incident?:Incident;csrf:string;consoleConfigured?:boolean;onOpenApproval:()=>void}){
+  const [live,setLive]=useState<LiveSnapshot|null>(null),[streaming,setStreaming]=useState(false);
+  const [connected,setConnected]=useState(false),[busy,setBusy]=useState(''),[error,setError]=useState('');
+  const load=useCallback(async()=>{try{const r=await fetch('/api/live/state');if(r.ok)setLive((await r.json()).live);}catch{}} ,[]);
+  useEffect(()=>{void load();
+    const source=new EventSource('/api/live/stream');
+    source.onopen=()=>setConnected(true);source.onerror=()=>setConnected(false);
+    const onState=(event:Event)=>{try{setLive(JSON.parse((event as MessageEvent).data));}catch{}};
+    source.addEventListener('state',onState);
+    return ()=>{source.removeEventListener('state',onState);source.close();};
+  },[load]);
+  // A page reload during an existing session should reconnect to the native frame stream.
+  useEffect(()=>{if(live&&['running','awaiting_fix','verifying','verified'].includes(live.status))setStreaming(true);},[live?.status]);
+  const call=async(path:string,body?:unknown)=>{setBusy(path);setError('');
+    if(path==='/api/live/start')setStreaming(true);
+    try{const r=await fetch(path,{method:'POST',headers:{'content-type':'application/json','x-csrf-token':csrf},body:JSON.stringify(body??{})});const result=await r.json();if(!r.ok)throw new Error(result.error||'عملیات ناموفق بود.');if(result.live)setLive(result.live);}
+    catch(e){setError((e as Error).message);}finally{setBusy('');}
+  };
+  const running=['running','awaiting_fix','verifying'].includes(live?.status??'');
+  const canVerify=streaming&&!running&&(incident?.status==='resolved'||live?.status==='verified');
+  return <div className="live-grid">
+    <section className="panel live-panel">
+      <div className="panel-heading"><h2><MonitorPlay size={19}/> پنجرهٔ زندهٔ عامل</h2>      <div className="live-tags"><span className="tag"><span className={`dot ${connected?'mint':'amber'}`}/>{connected?'جریان رویداد متصل':'در حال اتصال'}</span><span className={`tag ${live?.status==='verified'?'success-tag':''}`}>{liveLabels[live?.status??'idle']}</span></div></div>
+      <div className="live-stage">{streaming?<img src="/api/live/mjpeg" alt="نمای زندهٔ مرورگر عامل" />:<div className="live-placeholder"><MonitorPlay size={40}/><p>با شروع جلسه، مرورگر واقعی عامل روی کنسول لیارا و ویترین فروشگاه اینجا پخش می‌شود.</p><small>پخش تصویر فقط روی همین نشست خصوصی و ۱۲۷٫۰٫۰٫۱ انجام می‌شود.</small></div>}<div className="live-overlay"><span className="live-rec"><i/>LIVE VIEW</span></div></div>
+      <div className="live-address"><LockKeyhole size={13}/><span dir="ltr">{live?.currentUrl??live?.appUrl??'—'}</span></div>
+      <div className="live-controls">
+        <button className="primary" disabled={!project||running||Boolean(busy)} onClick={()=>void call('/api/live/start',{projectId:project?.id})}>{busy==='/api/live/start'?<LoaderCircle size={16} className="spin"/>:<Play size={16}/>} شروع جلسهٔ زنده</button>
+        <button className="secondary" disabled={!streaming||Boolean(busy)} onClick={()=>void call('/api/live/stop')}>{busy==='/api/live/stop'?<LoaderCircle size={16} className="spin"/>:<Square size={15}/>} توقف</button>
+        {canVerify&&<button className="secondary" disabled={Boolean(busy)||live?.status==='verifying'} onClick={()=>void call('/api/live/verify')}>{busy==='/api/live/verify'||live?.status==='verifying'?<LoaderCircle size={16} className="spin"/>:<RefreshCw size={16}/>} بررسی زندهٔ نتیجه</button>}
+      </div>
+      {error&&<p role="alert" className="live-error"><TriangleAlert size={15}/>{error}</p>}
+      <p className="live-note"><Shield size={14}/>{consoleConfigured?'ورود به کنسول با اعتبارنامهٔ محلی .env انجام می‌شود و هرگز به مدل، گزارش یا مرورگر نمایش داده نمی‌شود.':'کلید ورود کنسول تنظیم نشده است؛ جلسه از ویترین فروشگاه و برنامهٔ واقعی ادامه می‌یابد.'}</p>
+    </section>
+    <section className="panel live-side">
+      <div className="panel-heading"><h2><Radio size={18}/> گام‌های عامل</h2><span className="tag">{number(live?.steps.length??0)} گام</span></div>
+      <ol className="live-steps">{(live?.steps??[]).map(step=><li key={step.id} className={step.state}><span className="live-step-icon">{step.state==='done'?<Check size={14}/>:step.state==='failed'?<X size={14}/>:<LoaderCircle size={14} className="spin"/>}</span><div><b>{step.title}</b>{step.detail&&<small>{step.detail}</small>}</div><time>{time(step.at)}</time></li>)}{(!live||live.steps.length===0)&&<li className="live-empty"><Terminal size={22}/><p>با شروع جلسه، مسیر واقعی مرورگر و تصمیم‌های عامل اینجا ثبت می‌شود.</p></li>}</ol>
+      {incident&&<div className={`live-incident ${incident.status==='resolved'?'ok':''}`}><span className={`dot ${incident.status==='resolved'?'mint':incident.status==='failed'?'amber':'mint'}`}/><div><b>{labels[incident.status]}</b><small>{incident.error??'رخداد همین پروژه، متصل به جلسهٔ زنده'}</small></div>{incident.status==='awaiting_approval'&&<button className="secondary" onClick={onOpenApproval}>بررسی و تأیید <ArrowLeft size={14}/></button>}{incident.status==='resolved'&&<button className="secondary" onClick={onOpenApproval}>گزارش بازیابی <ArrowLeft size={14}/></button>}</div>}
+      {live?.verified&&<div className="alert success" role="status"><CheckCheck size={17}/><span>بررسی زنده: HTTP {live.verified.status} — پاسخ واقعی سرویس پس از انتشار ثبت شد.</span></div>}
+    </section>
+  </div>;
+}
 
 createRoot(document.getElementById('root')!).render(<App/>);

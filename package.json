@@ -14,6 +14,8 @@
     "mcp": "node --env-file-if-exists=.env --import tsx src/mcp.ts",
     "spike": "node --env-file-if-exists=.env --import tsx scripts/spike.ts",
     "test:browser": "node --import tsx scripts/browser-check.ts",
+    "test:live": "node --env-file-if-exists=.env --import tsx scripts/live-check.ts",
+    "test:e2e": "node --env-file-if-exists=.env --import tsx scripts/e2e-check.ts",
     "test:mcp": "node --import tsx scripts/mcp-check.ts"
   },
   "dependencies": {
