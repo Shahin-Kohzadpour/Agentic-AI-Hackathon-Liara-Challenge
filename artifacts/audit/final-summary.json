@@ -1,0 +1,43 @@
+{
+  "auditDate": "2026-10-22",
+  "baseCommit": "8dad40ea4d2765edffdb8b88a9d3b761a1d3c2e4",
+  "workingTreeAtStart": "clean",
+  "sourceTreeAfterFixes": "local working tree (uncommitted at time of final checks)",
+  "nodeVersionsTested": ["26.7.0", "22.16.0"],
+  "backendTests": { "passed": 27, "failed": 0 },
+  "candidateChecks": { "passed": 11, "total": 11, "breakdown": "7 main + 4 boundary" },
+  "build": "passed",
+  "browserRehearsal": {
+    "repair": "actual Codex SDK",
+    "candidateChecks": 11,
+    "deployment": "local rehearsal only",
+    "evidence": "artifacts/audit/browser-final-rehearsal/browser-check.json",
+    "at": "2026-10-22T13:58:51.180Z"
+  },
+  "mcp": { "realClient": "passed", "approvalSeparation": "passed" },
+  "live": {
+    "project": "negahban-demo-4d0934",
+    "release": "6ad9f90e743f4acf4fad6877",
+    "readOnlyChecks": "passed",
+    "confirmedBoundaryDefects": [
+      "empty body or malformed JSON returns 500 instead of 400",
+      "1e308 returns 200 with subtotal null instead of 400"
+    ],
+    "localFixReady": true,
+    "deployed": false
+  },
+  "delivery": {
+    "sourceZip": "negahban-source.zip",
+    "submissionZip": "negahban-submission.zip",
+    "zipsAreStaleRelativeToAuditFixes": true,
+    "video": "DEMO.fa.mp4, 300.07s, synthetic narration declared"
+  },
+  "cloudMutationsPerformed": 0,
+  "cloudActionRequiresExplicitApproval": true,
+  "knownResidualRisks": [
+    "live boundary defects remain until an approved deployment",
+    "bubblewrap allows subprocess execution inside the sandbox if the AST validator is bypassed, but host mounts and network were blocked in tests",
+    "9 npm audit findings remain in the @liara/cli dependency tree; usage is local and argument-controlled",
+    "no rate limit on the local human session key"
+  ]
+}

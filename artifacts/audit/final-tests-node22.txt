@@ -1,0 +1,178 @@
+
+> liara-sre-agent@0.1.0 test
+> node --import tsx --test tests/*.test.ts
+
+TAP version 13
+# (node:54039) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real defect is reproduced; unobserved HTTP health is not fabricated
+ok 1 - real defect is reproduced; unobserved HTTP health is not fabricated
+  ---
+  duration_ms: 508.782056
+  type: 'test'
+  ...
+# Subtest: independent verifier passes repaired candidate including held-out cases
+ok 2 - independent verifier passes repaired candidate including held-out cases
+  ---
+  duration_ms: 1040.738518
+  type: 'test'
+  ...
+# Subtest: unapproved apply is refused without changing deployment
+ok 3 - unapproved apply is refused without changing deployment
+  ---
+  duration_ms: 523.668241
+  type: 'test'
+  ...
+# Subtest: rejection never changes source or marks incident resolved
+ok 4 - rejection never changes source or marks incident resolved
+  ---
+  duration_ms: 522.127782
+  type: 'test'
+  ...
+# Subtest: approved recovery succeeds and replay causes no second deployment
+ok 5 - approved recovery succeeds and replay causes no second deployment
+  ---
+  duration_ms: 760.941761
+  type: 'test'
+  ...
+# Subtest: stale base revision invalidates approval
+ok 6 - stale base revision invalidates approval
+  ---
+  duration_ms: 454.407999
+  type: 'test'
+  ...
+# Subtest: source tampering after approval is blocked
+ok 7 - source tampering after approval is blocked
+  ---
+  duration_ms: 449.220206
+  type: 'test'
+  ...
+# Subtest: expired approval cannot execute
+ok 8 - expired approval cannot execute
+  ---
+  duration_ms: 483.517326
+  type: 'test'
+  ...
+# Subtest: bad patches cannot reach approval
+ok 9 - bad patches cannot reach approval
+  ---
+  duration_ms: 438.107335
+  type: 'test'
+  ...
+# Subtest: sandbox cannot read host files or deployment credentials
+ok 10 - sandbox cannot read host files or deployment credentials
+  ---
+  duration_ms: 158.744866
+  type: 'test'
+  ...
+# Subtest: redaction removes structured secrets and known credentials
+ok 11 - redaction removes structured secrets and known credentials
+  ---
+  duration_ms: 4.850032
+  type: 'test'
+  ...
+# Subtest: candidate contract blocks imports and constructor escapes
+ok 12 - candidate contract blocks imports and constructor escapes
+  ---
+  duration_ms: 5.180293
+  type: 'test'
+  ...
+# Subtest: helper initialization does not clear another active project lock
+ok 13 - helper initialization does not clear another active project lock
+  ---
+  duration_ms: 16.35036
+  type: 'test'
+  ...
+# Subtest: a second server cannot claim the same data directory
+ok 14 - a second server cannot claim the same data directory
+  ---
+  duration_ms: 14.899512
+  type: 'test'
+  ...
+# Subtest: READY plus public 502 is a failed deployment, never successful setup
+ok 15 - READY plus public 502 is a failed deployment, never successful setup
+  ---
+  duration_ms: 31.810162
+  type: 'test'
+  ...
+# Subtest: a late successful HTTP check reconciles the same release without redeploy
+ok 16 - a late successful HTTP check reconciles the same release without redeploy
+  ---
+  duration_ms: 472.743401
+  type: 'test'
+  ...
+# Subtest: faulty prior source is not offered as known-good rollback
+ok 17 - faulty prior source is not offered as known-good rollback
+  ---
+  duration_ms: 867.0462
+  type: 'test'
+  ...
+# Subtest: HTTP boundary requires private human session and refuses MCP approval
+ok 18 - HTTP boundary requires private human session and refuses MCP approval
+  ---
+  duration_ms: 3306.495633
+  type: 'test'
+  ...
+# Subtest: candidate contract accepts legitimate pure variants and rejects tagged templates
+ok 19 - candidate contract accepts legitimate pure variants and rejects tagged templates
+  ---
+  duration_ms: 13.921978
+  type: 'test'
+  ...
+# Subtest: one validator rejection triggers a bounded retry
+ok 20 - one validator rejection triggers a bounded retry
+  ---
+  duration_ms: 509.812629
+  type: 'test'
+  ...
+# Subtest: tampered action digest cannot execute
+ok 21 - tampered action digest cannot execute
+  ---
+  duration_ms: 448.839423
+  type: 'test'
+  ...
+# Subtest: live reset is explicitly labeled as an intentional faulty deployment
+ok 22 - live reset is explicitly labeled as an intentional faulty deployment
+  ---
+  duration_ms: 24.917962
+  type: 'test'
+  ...
+# Subtest: demo boundary distinguishes missing body and oversized input
+ok 23 - demo boundary distinguishes missing body and oversized input
+  ---
+  duration_ms: 54.661867
+  type: 'test'
+  ...
+# Subtest: SSE flushes headers immediately and is unavailable to the tool capability
+ok 24 - SSE flushes headers immediately and is unavailable to the tool capability
+  ---
+  duration_ms: 4220.582745
+  type: 'test'
+  ...
+# Subtest: naive missing-discount repair fails the new overflow boundaries
+ok 25 - naive missing-discount repair fails the new overflow boundaries
+  ---
+  duration_ms: 153.673061
+  type: 'test'
+  ...
+# Subtest: fixture HTTP server rejects malformed JSON with 400
+ok 26 - fixture HTTP server rejects malformed JSON with 400
+  ---
+  duration_ms: 280.384218
+  type: 'test'
+  ...
+# Subtest: startup recovery marks interrupted work failed and clears only stale locks
+ok 27 - startup recovery marks interrupted work failed and clears only stale locks
+  ---
+  duration_ms: 14.250481
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23661.913051

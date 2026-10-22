@@ -1,0 +1,420 @@
+{
+  "audit": {
+    "date": "2026-10-22",
+    "baseCommit": "8dad40ea4d2765edffdb8b88a9d3b761a1d3c2e4",
+    "workingTreeAtStart": "clean",
+    "nodeTested": [
+      "v26.7.0",
+      "v22.16.0"
+    ],
+    "bubblewrap": "0.11.2",
+    "codex": {
+      "sdk": "0.163.0",
+      "cli": "0.149.1",
+      "auth": "ChatGPT login (no credential value read or printed)"
+    },
+    "liaraCli": "9.6.0",
+    "browser": "Chromium via Playwright 1.64.1",
+    "liveRelease": "6ad9f90e743f4acf4fad6877",
+    "liveProject": "negahban-demo-4d0934",
+    "finalBackendTests": 27,
+    "finalCandidateTests": 11,
+    "finalPostDeployChecks": 11,
+    "cloudMutationsPerformed": 0,
+    "finalCandidateBreakdown": "7 main + 4 boundary (null item, unsafe price, overflow, max safe)",
+    "finalBrowserRehearsal": "artifacts/audit/browser-final-rehearsal/browser-check.json (2026-10-22T13:58:51Z, actual Codex SDK, 11/11 candidate checks)",
+    "finalBrowserRehearsalNote": "Local rehearsal only; no cloud mutation. Live deployment remains release 6ad9f90e743f4acf4fad6877 with its historical 7-check record and the two unfixed boundary responses."
+  },
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "high",
+      "status": "FIXED",
+      "title": "Intermittent rejection of a legitimate Codex repair by the narrow AST call allowlist",
+      "file": "src/candidate.ts, src/core.ts",
+      "lines": "candidate.ts:8-31; core.ts:85-96",
+      "precondition": "Real Codex repair; model output uses a safe method not in the original eight-name allowlist.",
+      "repro": "Run PORT=4402 npm run test:browser on the pre-fix tree. One of five observed real-Codex runs ended with status=failed and error 'فراخوانی خارج از قرارداد تابع نمونه مجاز نیست' instead of awaiting_approval.",
+      "expected": "A legitimate pure repair reaches awaiting_approval; an unsafe repair is rejected.",
+      "observed": "1/5 real-Codex runs rejected; the rejected source was not persisted, so the exact callee is unknown. Three direct agent samples and one repeat browser run were valid.",
+      "evidence": [
+        "artifacts/audit/codex-nondeterminism.txt",
+        "artifacts/audit/probe-repair.txt",
+        "artifacts/audit/final-browser-check.json"
+      ],
+      "fix": "Expanded the pure-method allowlist (isSafeInteger, isFinite, abs, every, filter, map, etc.); closed the tagged-template bypass; added one bounded retry with the exact validator error; improved the rejection message with the offending callee.",
+      "regression": "tests: 'candidate contract accepts legitimate pure variants and rejects tagged templates', 'one validator rejection triggers a bounded retry'",
+      "residualRisk": "The retry adds one Codex call in the rare rejection path; the exact pre-fix callee remains unknown."
+    },
+    {
+      "id": "F-02",
+      "severity": "medium",
+      "status": "FIXED",
+      "title": "SSE sent no response headers until the 12s heartbeat",
+      "file": "src/server.ts",
+      "lines": "82-86",
+      "precondition": "Quiet event stream (no new events) and a browser or proxy waiting for headers.",
+      "repro": "Log in, open /api/events, measure time to response headers.",
+      "expected": "Headers arrive immediately so the stream is established.",
+      "observed": "Headers arrived at 12,016 ms (pre-fix); the initial UI state masked the delay, but reconnect/status behavior could stall.",
+      "evidence": [
+        "artifacts/audit/probe-ui.json",
+        "artifacts/audit/probe-ui-fixed.json"
+      ],
+      "fix": "Write ': connected\\n\\n' immediately after writeHead.",
+      "regression": "tests: 'SSE flushes headers immediately and is unavailable to the tool capability' (post-fix measured 28 ms in the browser probe).",
+      "residualRisk": "None observed."
+    },
+    {
+      "id": "F-03",
+      "severity": "medium",
+      "status": "FIXED",
+      "title": "Action approval was not re-bound to the action digest at execution",
+      "file": "src/core.ts",
+      "lines": "138",
+      "precondition": "An approved action document whose digest is altered (local store tampering) while the snapshot remains intact.",
+      "repro": "Approve a valid action, change action.digest to 64 zeros, call execute.",
+      "expected": "Execution is refused because the approved source digest does not match.",
+      "observed": "Pre-fix execution succeeded and deployed/incremented the project revision.",
+      "evidence": [
+        "artifacts/audit/probe-state.json"
+      ],
+      "fix": "Compare approvedSource.digest with action.digest before execution.",
+      "regression": "tests: 'tampered action digest cannot execute'",
+      "residualRisk": "Requires local state write access; the check is defense in depth."
+    },
+    {
+      "id": "F-04",
+      "severity": "medium",
+      "status": "FIXED",
+      "title": "Live reset was presented without explicitly saying it intentionally restores the faulty seed",
+      "file": "src/core.ts",
+      "lines": "211-221",
+      "precondition": "A liara-mode project and the 'آماده‌سازی نسخهٔ نمونه' (reset) operation.",
+      "repro": "Call resetProposal for a liara-mode project and inspect the pending action.",
+      "expected": "The approval card states clearly that the live service will deliberately be broken.",
+      "observed": "Pre-fix title was the generic 'انتشار برنامهٔ نمونه'; the risk text warned about a live change but not the intentional 500.",
+      "evidence": [
+        "artifacts/audit/probe-state.json"
+      ],
+      "fix": "For liara mode, set title 'بازنشانی نمونهٔ زنده به نسخهٔ معیوب' and an explicit risk sentence.",
+      "regression": "tests: 'live reset is explicitly labeled as an intentional faulty deployment'",
+      "residualRisk": "The operation remains available (intended for repeat demos) and still requires human approval."
+    },
+    {
+      "id": "F-05",
+      "severity": "medium",
+      "status": "FIXED_LOCAL_BLOCKED_LIVE",
+      "title": "Empty or malformed request body returned HTTP 500 instead of 400",
+      "file": "fixtures/shop/server.mjs, src/server.ts",
+      "lines": "server.mjs:13; server.ts:101",
+      "precondition": "POST /api/summary with an empty body (live app or local demo route).",
+      "repro": "curl -X POST -H 'content-type: application/json' -d '' https://negahban-demo-4d0934.liara.run/api/summary",
+      "expected": "400 with a client-error contract (INVALID_JSON / INVALID_BODY).",
+      "observed": "Live and pre-fix local: HTTP 500 {\"error\":\"INTERNAL_ERROR\"}.",
+      "evidence": [
+        "artifacts/audit/live-boundary.json",
+        "artifacts/audit/probe-demo.json",
+        "artifacts/audit/final-tests.txt"
+      ],
+      "fix": "server.mjs returns 400 INVALID_JSON for JSON parse/empty-body errors; the local demo route returns 400 INVALID_BODY for a missing body; the error handler preserves status codes.",
+      "regression": "tests: 'demo boundary distinguishes missing body and oversized input', 'fixture HTTP server rejects malformed JSON with 400'",
+      "residualRisk": "The live release 6ad9f90e still returns 500 until the fixed source is deployed with explicit approval."
+    },
+    {
+      "id": "F-06",
+      "severity": "medium",
+      "status": "FIXED_LOCAL_BLOCKED_LIVE",
+      "title": "Numeric overflow returned HTTP 200 with null totals",
+      "file": "fixtures/shop/summary.mjs, runner/verify.mjs",
+      "lines": "summary.mjs:3-17; verify.mjs:12-14",
+      "precondition": "POST /api/summary with a price such as 1e308 or MAX_SAFE_INTEGER × 2.",
+      "repro": "curl -d '{\"items\":[{\"price\":1e308,\"quantity\":2}]}' https://negahban-demo-4d0934.liara.run/api/summary",
+      "expected": "400 INVALID_ITEMS for a value that cannot be represented as a safe integer.",
+      "observed": "Live: HTTP 200 {\"subtotal\":null,\"discount\":0,\"total\":null}. Local repaired module pre-fix: the same null serialization.",
+      "evidence": [
+        "artifacts/audit/live-boundary.json",
+        "artifacts/audit/probe-demo.json",
+        "artifacts/audit/contrast.txt"
+      ],
+      "fix": "Require Number.isSafeInteger for price, quantity, product, subtotal and discount sum; add three boundary cases to the protected verifier (10 total).",
+      "regression": "tests: 'independent verifier passes repaired candidate including held-out cases' (10 checks), 'naive missing-discount repair fails the new overflow boundaries'",
+      "residualRisk": "The live release 6ad9f90e still returns 200/null until redeployed with explicit approval."
+    },
+    {
+      "id": "F-07",
+      "severity": "low",
+      "status": "FIXED",
+      "title": "Global error handler flattened Fastify 413/415 to 400",
+      "file": "src/server.ts",
+      "lines": "36-41",
+      "precondition": "Request body over the 40 KB limit.",
+      "repro": "POST /demo/api/summary with a 50 KB JSON body.",
+      "expected": "413 Request Entity Too Large.",
+      "observed": "Pre-fix: 400. Post-fix: 413 with a Persian message.",
+      "evidence": [
+        "artifacts/audit/probe-demo.json",
+        "artifacts/audit/final-tests.txt"
+      ],
+      "fix": "Preserve error.statusCode in the 400–599 range and map known Fastify codes.",
+      "regression": "tests: 'demo boundary distinguishes missing body and oversized input'",
+      "residualRisk": "None observed."
+    },
+    {
+      "id": "F-08",
+      "severity": "low",
+      "status": "FIXED",
+      "title": "MCP tool bearer could open SSE streams and consume dashboard slots",
+      "file": "src/server.ts",
+      "lines": "80-86",
+      "precondition": "Bearer mcp-key on GET /api/events.",
+      "repro": "Hold 12 SSE connections with the tool key, then load the dashboard.",
+      "expected": "A tool capability cannot consume the human dashboard stream.",
+      "observed": "Pre-fix: allowed by the global hook and the route; post-fix: 401.",
+      "evidence": [
+        "artifacts/audit/probe-mcp2.json",
+        "artifacts/audit/final-tests.txt"
+      ],
+      "fix": "Require a private human session in the /api/events route.",
+      "regression": "tests: 'SSE flushes headers immediately and is unavailable to the tool capability'",
+      "residualRisk": "None observed."
+    },
+    {
+      "id": "F-09",
+      "severity": "low",
+      "status": "FIXED",
+      "title": "Auxiliary dashboard text failed WCAG AA contrast",
+      "file": "src/web/style.css",
+      "lines": "6-9",
+      "precondition": "Normal vision check of small muted labels.",
+      "repro": "Measure computed colors against white/panel backgrounds.",
+      "expected": "At least 4.5:1 for normal text.",
+      "observed": "Pre-fix ratios: stat small 2.65, event text 3.21, page heading 3.30, risk 2.36, approval expiry 2.32, footer 1.94.",
+      "evidence": [
+        "artifacts/audit/contrast.txt"
+      ],
+      "fix": "Darker muted colors for the affected selectors; post-fix ratios 4.75–5.73.",
+      "regression": "Manual measurement (contrast.txt); no automated CSS contrast test.",
+      "residualRisk": "Some decorative/icon colors were not re-measured."
+    },
+    {
+      "id": "F-10",
+      "severity": "low",
+      "status": "MITIGATED",
+      "title": "@fastify/static 9.3.0 was in the advisory range; upgraded to 10.1.7",
+      "file": "package.json, package-lock.json",
+      "lines": "package.json:20",
+      "precondition": "Route guards protecting static files (not used here) or path traversal outside the static root.",
+      "repro": "npm audit; traversal probes with --path-as-is.",
+      "expected": "No known server-side advisory with a practical exploit in this configuration.",
+      "observed": "9.3.0 was affected by GHSA-83w8-p2f5-377r / GHSA-8pvw-jcv7-9cmj; traversal outside dist returned 404. 10.1.7 passes the suite/build and serves the SPA and assets.",
+      "evidence": [
+        "artifacts/audit/final-npm-audit.json",
+        "artifacts/audit/final-tests.txt",
+        "artifacts/audit/final-build.txt"
+      ],
+      "fix": "Upgraded @fastify/static to ^10.1.7; verified SPA, JS and CSS serving.",
+      "regression": "Full 26-test suite, build, and static-serving check.",
+      "residualRisk": "9 advisories remain in the @liara/cli dependency tree; fixing requires a breaking downgrade to 1.9.3 and is not appropriate for this MVP."
+    },
+    {
+      "id": "F-11",
+      "severity": "info",
+      "status": "PASS",
+      "title": "Historical browser evidence did not exercise a fresh repair",
+      "file": "artifacts/browser-check.json (historical)",
+      "lines": "n/a",
+      "precondition": "Local sample already recovered before the recorded browser check.",
+      "repro": "Inspect repairInvoked/preparedRepairUsed in the historical artifact.",
+      "expected": "A claim of browser-driven repair should show repairInvoked=true or a prepared repair used.",
+      "observed": "Historical artifact: repairInvoked=false. The audit re-ran the full browser flow twice with the real Codex SDK; the final run reached awaiting_approval with 11/11 candidate checks (browser-final-rehearsal/browser-check.json).",
+      "evidence": [
+        "artifacts/browser-check.json",
+        "artifacts/audit/final-browser-check.json",
+        "artifacts/audit/browser-final-rehearsal/browser-check.json"
+      ],
+      "fix": "New audit run invoked the real Codex SDK through the browser and recorded repairInvoked=true.",
+      "regression": "n/a",
+      "residualRisk": "Historical artifact remains as-is and must be read with the new evidence."
+    },
+    {
+      "id": "F-12",
+      "severity": "info",
+      "status": "PASS",
+      "title": "Liara identity, release, logs and HTTP verification are consistent",
+      "file": "src/liara.ts",
+      "lines": "1-106",
+      "precondition": "Read-only token in .env.",
+      "repro": "GET /v1/projects, /v1/projects/{name}/releases, v2 logs, metrics; live /healthz and /api/summary.",
+      "expected": "One ACTIVE project in the expected team; current release 6ad9f90e… READY; logs scoped to that release; 3/3 HTTP checks pass.",
+      "observed": "Exactly that; team ID matched; metrics endpoints returned data with unit/freshness limitations; no zero-fill.",
+      "evidence": [
+        "artifacts/audit/liara-readonly.json",
+        "artifacts/audit/live-boundary.json"
+      ],
+      "fix": "None required.",
+      "regression": "n/a",
+      "residualRisk": "Live read-only only; no cloud write was performed."
+    },
+    {
+      "id": "F-13",
+      "severity": "info",
+      "status": "PASS",
+      "title": "Delivery archives and video integrity",
+      "file": "negahban-source.zip, negahban-submission.zip, DEMO.fa.mp4, LIVE-RUN.silent.mp4",
+      "lines": "n/a",
+      "precondition": "Delivery folder as provided.",
+      "repro": "SHA-256 against package-manifest.json; zipfile test; secret scan; ffprobe.",
+      "expected": "Hashes match, no .env/.data/keys, playable 300s narrated video and 130s silent raw run.",
+      "observed": "Both hashes match; no secret hits; no .data/.env; DEMO 300.07s H.264/AAC mono with mean -23.5 dB and max -6.1 dB; LIVE-RUN 130.16s silent; synthetic narration disclosed in the manifest and SUBMISSION doc.",
+      "evidence": [
+        "artifacts/audit/ledger.json"
+      ],
+      "fix": "None required. Repackage after code fixes before final submission.",
+      "regression": "n/a",
+      "residualRisk": "The delivery ZIPs are stale relative to the audit fixes; they must be regenerated after approval. Persian OCR was not available for a frame-level text check."
+    },
+    {
+      "id": "F-14",
+      "severity": "info",
+      "status": "PASS",
+      "title": "Declared Node >=22.16 minimum is viable",
+      "file": "package.json",
+      "lines": "6-8",
+      "precondition": "Node 22.16.0 binary from nodejs.org.",
+      "repro": "Run the 26-test suite and vite/tsc build with Node 22.16.0.",
+      "expected": "Tests and build pass; node:sqlite and --env-file-if-exists exist.",
+      "observed": "27/27 pass, build passes; node:sqlite prints an ExperimentalWarning but works; --env-file-if-exists is present.",
+      "evidence": [
+        "artifacts/audit/final-tests.txt",
+        "artifacts/audit/final-build.txt"
+      ],
+      "fix": "None.",
+      "regression": "n/a",
+      "residualRisk": "node:sqlite is experimental on Node 22; a future Node minor may change it."
+    },
+    {
+      "id": "F-15",
+      "severity": "low",
+      "status": "PARTIAL",
+      "title": "Sandbox blocks host files and network but permits subprocess execution if the AST validator is bypassed",
+      "file": "src/runner.ts, src/candidate.ts",
+      "lines": "runner.ts:22-27; candidate.ts:8-31",
+      "precondition": "Direct snapshot injection (simulating a validator bypass).",
+      "repro": "Run a summary.mjs that imports child_process/fetch/fs inside bwrap.",
+      "expected": "No host secrets, no network; subprocess policy documented.",
+      "observed": "fetch blocked (TypeError); /home/.../.env blocked; execFileSync('/usr/bin/id') succeeded as uid=1000 inside the mount/network namespace. The product path blocks the import via the validator.",
+      "evidence": [
+        "artifacts/audit/probe-sandbox-network.json",
+        "artifacts/audit/probe-boundaries.json"
+      ],
+      "fix": "No product change: the validator blocks imports and the sandbox removes host mounts/network. Documented as defense-in-depth layering.",
+      "regression": "tests: 'sandbox cannot read host files or deployment credentials'",
+      "residualRisk": "A future validator bypass could run /usr/bin binaries inside the sandbox for up to 12 s; no host files or egress were reachable in this test."
+    },
+    {
+      "id": "F-16",
+      "severity": "info",
+      "status": "BLOCKED",
+      "title": "Deploying the boundary fixes to the live Liara app",
+      "file": "fixtures/shop/summary.mjs, fixtures/shop/server.mjs",
+      "lines": "n/a",
+      "precondition": "Explicit owner approval for a new cloud release.",
+      "repro": "n/a",
+      "expected": "Live app returns 400 for empty/malformed bodies and for unsafe numeric totals.",
+      "observed": "Live release 6ad9f90e still returns 500 for an empty body and 200/null for 1e308.",
+      "evidence": [
+        "artifacts/audit/live-boundary.json"
+      ],
+      "fix": "Prepared local fix only; no cloud mutation performed.",
+      "regression": "Local tests and fixture HTTP test pass.",
+      "residualRisk": "Judges probing these boundaries on the live URL will see the old defects until approval and redeploy."
+    },
+    {
+      "id": "F-17",
+      "severity": "info",
+      "status": "NOT_TESTED",
+      "title": "Cloud writes, provisioning, restart, arbitrary repositories, continuous monitoring, full video visual review",
+      "file": "scripts/provision.ts, scripts/live-demo.ts, src/liara.ts",
+      "lines": "n/a",
+      "precondition": "Separate authorization / out of scope.",
+      "repro": "n/a",
+      "expected": "n/a",
+      "observed": "Not exercised. provision.ts --apply can create billable resources and auto-approve an initial deploy; it was not run. No restart or new deployment was performed.",
+      "evidence": [
+        "artifacts/audit/final-git.txt"
+      ],
+      "fix": "n/a",
+      "regression": "n/a",
+      "residualRisk": "These paths remain unverified by this audit."
+    },
+    {
+      "id": "F-18",
+      "severity": "low",
+      "status": "ACCEPTED",
+      "title": "Nine advisories remain in the @liara/cli dependency tree",
+      "file": "package-lock.json",
+      "lines": "n/a",
+      "precondition": "CLI processes trusted local liara.json/CLI arguments, not untrusted YAML/globs.",
+      "repro": "npm audit --omit=dev",
+      "expected": "No practical exploit in this usage.",
+      "observed": "3 moderate + 6 high, all under @liara/cli (js-yaml, sprintf-js, globby/braces/micromatch/@oclif/core). The suggested fix is a breaking downgrade to 1.9.3, which would break the verified deploy flags/auth format.",
+      "evidence": [
+        "artifacts/audit/final-npm-audit.json"
+      ],
+      "fix": "Not upgraded; documented. Revisit when @liara/cli 9.x publishes patched transitive ranges.",
+      "regression": "Deploy flags and auth file format verified against installed CLI 9.6.0.",
+      "residualRisk": "A malicious liara.json is not part of the product path (snapshot liara.json is trusted fixture data)."
+    },
+    {
+      "id": "F-19",
+      "severity": "low",
+      "status": "ACCEPTED",
+      "title": "No rate limit on the human session key; MCP incident_start can consume Codex quota",
+      "file": "src/server.ts, src/mcp.ts",
+      "lines": "44-50; mcp.ts",
+      "precondition": "Local loopback access; possession of the MCP capability.",
+      "repro": "Repeated wrong-key logins; repeated incident_start calls.",
+      "expected": "Local-only threat model; no cloud mutation without human approval.",
+      "observed": "No lockout/rate limit; incident_start can trigger model calls but cannot approve or deploy.",
+      "evidence": [
+        "artifacts/audit/probe-mcp.json"
+      ],
+      "fix": "Documented; no code change to avoid scope creep.",
+      "regression": "n/a",
+      "residualRisk": "A local process or a user with the MCP key can consume quota/time; dashboard approval remains separate."
+    },
+    {
+      "id": "F-20",
+      "severity": "info",
+      "status": "PASS",
+      "title": "Clean-checkout reproducibility",
+      "file": "package.json, package-lock.json",
+      "lines": "n/a",
+      "precondition": "git archive of the base commit into a fresh directory; npm ci.",
+      "repro": "npm ci && npm run build && npm test",
+      "expected": "Install, build and 18 tests pass without local state.",
+      "observed": "npm ci succeeded; build and 18/18 passed on the base tree; after fixes, 27/27 and build pass on Node 26 and Node 22.16.",
+      "evidence": [
+        "artifacts/audit/final-tests.txt",
+        "artifacts/audit/final-tests-node22.txt",
+        "artifacts/audit/final-build.txt"
+      ],
+      "fix": "n/a",
+      "regression": "n/a",
+      "residualRisk": "npm 11 warns that esbuild's install script is not allowlisted; the platform binary was present and the build succeeded."
+    }
+  ],
+  "blocked": [
+    "New Liara deployment of the boundary fixes (explicit approval required)",
+    "Live restart verification (mutating cloud action)",
+    "provision.ts --apply (billable resource creation)",
+    "Full video visual review with Persian OCR (no fas tessdata)"
+  ],
+  "notTested": [
+    "Arbitrary repositories / general autonomous SRE (out of declared scope)",
+    "Long-running monitoring, uptime and MTTR measurement",
+    "Kernel-level container escape research",
+    "Concurrent multi-host controller deployment (single-owner lock tested only)"
+  ]
+}

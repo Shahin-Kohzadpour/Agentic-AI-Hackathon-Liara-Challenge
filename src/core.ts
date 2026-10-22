@@ -82,8 +82,16 @@ export class Core {
       run.baseline=await this.runner.verify(this.snapshots.path(source.id));this.save(run);
       if(run.baseline.passed)throw new Error('خطای نمونه در منبع فعلی بازتولید نشد. بدون شاهد patch تولید نمی‌شود.');
       this.event(run,'patching','خطا در محیط جدا بازتولید شد. Codex اصلاح محدود را آماده می‌کند.');
-      const result=await this.agent.repair(source.files['summary.mjs'],run.request,run.evidence,run.baseline,message=>this.store.event(run.id,'patching',message));
-      validateCandidate(result.sourceCode);
+      let result=await this.agent.repair(source.files['summary.mjs'],run.request,run.evidence,run.baseline,message=>this.store.event(run.id,'patching',message));
+      try{validateCandidate(result.sourceCode);}
+      catch(validationError){
+        // Model output is nondeterministic. One bounded retry with the exact validator error avoids
+        // losing a valid incident to a legitimate construct the allowlist did not anticipate.
+        this.store.event(run.id,'patching','اصلاح نخست با قرارداد تابع نمونه سازگار نبود؛ یک اصلاح محدود دوباره درخواست می‌شود.');
+        const retryRequest=`${run.request}\n\nپاسخ قبلی توسط اعتبارسنج محافظت‌شده رد شد: ${messageOf(validationError)}\nیک ماژول کامل و اصلاح‌شده برگردان که فقط از تابع خالص نمونه و فراخوانی‌های مجاز استفاده می‌کند. قابلیت تازه‌ای اضافه نکن.`;
+        result=await this.agent.repair(source.files['summary.mjs'],retryRequest,run.evidence,run.baseline,message=>this.store.event(run.id,'patching',message));
+        validateCandidate(result.sourceCode);
+      }
       run.diagnosis=result.diagnosis;run.change=result.change;run.threadId=result.threadId;
       run.diff=createPatch('summary.mjs',source.files['summary.mjs'],result.sourceCode,'نسخهٔ فعلی','اصلاح پیشنهادی');
       const snapshot=await this.snapshots.create({...source.files,'summary.mjs':result.sourceCode});
@@ -127,6 +135,7 @@ export class Core {
     let run=a.runId?this.incident(a.runId):undefined;
     try{
       const approvedSource=await this.snapshots.assertIntact(a.snapshotId);
+      if(approvedSource.digest!==a.digest)throw new Error('منبع تأییدشده با digest مجوز مطابقت ندارد؛ تأیید تازه لازم است.');
       if(a.kind!=='restart')validateCandidate(approvedSource.files['summary.mjs']);
       const current=this.project(p.id);
       if(current.revision!==a.baseRevision||current.currentSnapshot!==a.baseSnapshot)throw new Error('نسخهٔ پایه تغییر کرده است؛ تأیید تازه لازم است.');
@@ -197,6 +206,17 @@ export class Core {
     }catch(e){run.error=messageOf(e);this.event(run,'failed',run.error);throw e;}
     finally{this.store.unlock(p.id,run.id);}
   }
-  async resetProposal(projectId:string){const snapshot=await this.snapshots.seed(join(this.root,'fixtures','shop'));return this.prepareAction(projectId,'deploy',snapshot.id);}
+  async resetProposal(projectId:string){
+    const snapshot=await this.snapshots.seed(join(this.root,'fixtures','shop'));
+    const action=await this.prepareAction(projectId,'deploy',snapshot.id);
+    const p=this.project(projectId);
+    if(p.mode==='liara'){
+      // A reset is intentionally destructive: label it explicitly before a human can approve it.
+      action.title='بازنشانی نمونهٔ زنده به نسخهٔ معیوب';
+      action.risk='این عملیات عمداً نسخهٔ دارای خطای ۵۰۰ را روی سرویس واقعی منتشر می‌کند و تا اصلاح بعدی، درخواست بدون تخفیف را خراب می‌کند.';
+      this.store.put('actions',action);
+    }
+    return action;
+  }
   async rollbackProposal(actionId:string){const previous=this.action(actionId);const verified=await this.runner.verify(this.snapshots.path(previous.baseSnapshot));if(!verified.passed)throw new Error('منبع قبلی از آزمون سلامت مستقل عبور نمی‌کند؛ به‌عنوان نسخهٔ سالم پیشنهاد نمی‌شود.');return this.prepareAction(previous.projectId,'rollback',previous.baseSnapshot);}
 }

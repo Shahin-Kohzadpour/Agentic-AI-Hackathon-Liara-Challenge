@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-22T13:47:52.644Z",
+  "readOnly": true,
+  "endpoint": "https://negahban-demo-4d0934.liara.run/api/summary",
+  "emptyBody": {
+    "status": 500,
+    "body": {
+      "error": "INTERNAL_ERROR"
+    }
+  },
+  "overflow": {
+    "status": 200,
+    "body": {
+      "subtotal": null,
+      "discount": 0,
+      "total": null
+    }
+  },
+  "valid": {
+    "status": 200,
+    "body": {
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200
+    }
+  }
+}

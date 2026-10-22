@@ -1,0 +1,121 @@
+{
+  "rtl": {
+    "dir": "rtl",
+    "lang": "fa",
+    "bodyDirection": "rtl"
+  },
+  "headings": {
+    "h1": [
+      "از خطا تا اطمینان."
+    ],
+    "h2": [
+      "چه مشکلی پیش آمده؟",
+      " جریان رفع رخداد",
+      " تصمیم با شماست",
+      " شواهد در دسترس",
+      " عملیات پروژه"
+    ]
+  },
+  "emptyState": 1,
+  "desktop": {
+    "overflow": false,
+    "sidebar": "fixed"
+  },
+  "mobile390": {
+    "overflow": false,
+    "sidebar": "relative"
+  },
+  "mobile320": {
+    "overflow": false
+  },
+  "focusOrder": [
+    {
+      "tag": "A",
+      "text": "نگهبان.\nهمکار استقرار و بازیابی"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "اتاق عملیات"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "شواهد و تشخیص"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "گزارش بازیابی"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "demo-shop\nتمرین محلی و جدا"
+    },
+    {
+      "tag": "A",
+      "text": "مستندات رسمی لیارا"
+    },
+    {
+      "tag": "A",
+      "text": "مشاهدهٔ برنامه"
+    },
+    {
+      "tag": "TEXTAREA",
+      "text": ""
+    }
+  ],
+  "sse": {
+    "ms": 12016,
+    "status": 200,
+    "type": "text/event-stream"
+  },
+  "afterPrepare": {
+    "xss": null,
+    "imgCount": 0,
+    "statusText": "اصلاح با Codex"
+  },
+  "approvalText": "درخواست تأیید\nانتشار اصلاح آزموده‌شده\n\nمحلی · demo-shop · منبع 0f6797382d6e\n\nمنبع\n0f6797382d6e\nاثر هزینه\nبدون هزینهٔ زیرساخت ابری\nفقط منبع تمرین محلی تغییر می‌کند؛ هزینه یا تغییر ابری ندارد.\nتأیید و اجرا\nانصراف\nمعتبر تا ۱۷:۳۲ · مجوز یک‌بارمصرف",
+  "afterReject": {
+    "revision": 1,
+    "status": "rejected",
+    "xss": null
+  },
+  "afterApprove": {
+    "summary": {
+      "status": 200,
+      "body": {
+        "subtotal": 200,
+        "discount": 0,
+        "total": 200
+      }
+    },
+    "revision": 2,
+    "xss": null
+  },
+  "report": {
+    "xss": null,
+    "imgCount": 0,
+    "hasScript": 0,
+    "bodyHasPayload": true
+  },
+  "download": {
+    "name": "incident-inc_5695252b83d8e545.json",
+    "bytes": 11716,
+    "json": true
+  },
+  "evidenceXss": {
+    "xss": null,
+    "imgCount": 0,
+    "text": "لاگ <img src=x onerror=\"window.__xss=1\">\nشاهد ثبت‌شده · ۱۷:۰۲"
+  },
+  "keyboard": {
+    "heading": "از خطا تا اطمینان.",
+    "focused": "BUTTON"
+  },
+  "pageErrors": [],
+  "gate": {
+    "label": 1,
+    "error": "کلید ورود معتبر نیست.",
+    "overflow": false,
+    "loginOk": true,
+    "hashAfter": ""
+  }
+}

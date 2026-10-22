@@ -1,0 +1,15 @@
+{
+  "prepared": {
+    "actionId": "act_94e2c1764c4b3988",
+    "isError": false
+  },
+  "applyPending": {
+    "isError": true,
+    "text": "{\"error\":\"تأیید انسانی معتبر برای این عملیات ثبت نشده است.\"}"
+  },
+  "httpToolState": 200,
+  "httpToolDecision": 403,
+  "httpToolLogin": 403,
+  "actionStatusAfter": "pending",
+  "reportViaTool": 400
+}

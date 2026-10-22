@@ -1,0 +1,195 @@
+{
+  "at": "2026-10-22T13:14:03.300Z",
+  "readOnly": true,
+  "project": "negahban-demo-4d0934",
+  "teamMatchesExpected": true,
+  "authScheme": "bearer",
+  "projects": {
+    "ok": true,
+    "count": 1,
+    "names": [
+      "negahban-demo-4d0934"
+    ],
+    "statuses": [
+      "ACTIVE"
+    ]
+  },
+  "me": {
+    "ok": true,
+    "keys": [
+      "user",
+      "team",
+      "databaseVersions",
+      "defaultDatabaseVersions",
+      "featureFlags",
+      "plans"
+    ],
+    "plansAvailable": 15
+  },
+  "currentRelease": "6ad9f90e743f4acf4fad6877",
+  "releases": {
+    "ok": true,
+    "currentRelease": "6ad9f90e743f4acf4fad6877",
+    "releases": [
+      {
+        "id": "6ad9f90e743f4acf4fad6877",
+        "state": "READY",
+        "createdAt": "2026-10-22T11:52:46.575Z",
+        "message": "negahban ca11cf806dcf6a86"
+      },
+      {
+        "id": "6ad9f588c588f1bc8f9314a4",
+        "state": "READY",
+        "createdAt": "2026-10-22T11:37:44.045Z",
+        "message": "negahban d00826f3e5175d8c"
+      },
+      {
+        "id": "6ad9f4a0ec28f72532290cf7",
+        "state": "READY",
+        "createdAt": "2026-10-22T11:33:52.085Z",
+        "message": "negahban d00826f3e5175d8c"
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "status",
+      "available": true,
+      "title": "وضعیت برنامه",
+      "observedAt": "2026-10-22T13:14:05.741Z"
+    },
+    {
+      "kind": "logs",
+      "available": true,
+      "title": "لاگ‌های برنامه",
+      "observedAt": "2026-10-22T13:14:05.744Z",
+      "dataSummary": {
+        "lines": 5,
+        "first": "1792670007801521059",
+        "last": "1792674791093445690",
+        "releaseIds": [
+          "6ad9f90e743f4acf4fad6877"
+        ]
+      }
+    },
+    {
+      "kind": "events",
+      "available": true,
+      "title": "رویدادهای لیارا",
+      "observedAt": "2026-10-22T13:14:05.746Z"
+    },
+    {
+      "kind": "releases",
+      "available": true,
+      "title": "نسخه‌های منتشرشده",
+      "observedAt": "2026-10-22T13:14:05.747Z",
+      "dataSummary": {
+        "currentRelease": "6ad9f90e743f4acf4fad6877",
+        "count": 3
+      }
+    },
+    {
+      "kind": "cpu",
+      "available": true,
+      "title": "مصرف CPU",
+      "limitation": "سری خام لیارا؛ واحد و تازگی باید با قرارداد ارائه‌دهنده تطبیق داده شوند. دادهٔ خالی معادل صفر نیست.",
+      "observedAt": "2026-10-22T13:14:05.749Z",
+      "dataSummary": {
+        "keys": [
+          "end",
+          "result"
+        ]
+      }
+    },
+    {
+      "kind": "memory",
+      "available": true,
+      "title": "مصرف حافظه",
+      "limitation": "سری خام لیارا؛ واحد و تازگی باید با قرارداد ارائه‌دهنده تطبیق داده شوند. دادهٔ خالی معادل صفر نیست.",
+      "observedAt": "2026-10-22T13:14:05.751Z",
+      "dataSummary": {
+        "keys": [
+          "end",
+          "result"
+        ]
+      }
+    }
+  ],
+  "http": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "درخواست اصلی بدون تخفیف",
+        "passed": true,
+        "expected": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 0,
+            "total": 200
+          }
+        },
+        "actual": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 0,
+            "total": 200
+          }
+        }
+      },
+      {
+        "name": "تخفیف معتبر",
+        "passed": true,
+        "expected": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 10,
+            "total": 190
+          }
+        },
+        "actual": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 10,
+            "total": 190
+          }
+        }
+      },
+      {
+        "name": "قرارداد ورودی نامعتبر",
+        "passed": true,
+        "expected": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_DISCOUNTS"
+          }
+        },
+        "actual": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_DISCOUNTS"
+          }
+        }
+      }
+    ],
+    "durationMs": 1698,
+    "source": "http"
+  },
+  "overflow": {
+    "status": 200,
+    "body": {
+      "subtotal": null,
+      "discount": 0,
+      "total": null
+    }
+  },
+  "emptyBody": {
+    "status": 500,
+    "body": {
+      "error": "INTERNAL_ERROR"
+    }
+  }
+}

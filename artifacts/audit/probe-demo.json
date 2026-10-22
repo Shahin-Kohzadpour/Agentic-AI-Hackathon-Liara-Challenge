@@ -1,0 +1,121 @@
+{
+  "malformed": {
+    "status": 400,
+    "body": {
+      "error": "Body is not valid JSON but content-type is set to 'application/json'"
+    }
+  },
+  "oversize": {
+    "status": 400,
+    "body": "{\"error\":\"Request body is too large\"}"
+  },
+  "nullBody": {
+    "status": 400,
+    "body": {
+      "error": "INVALID_ITEMS"
+    }
+  },
+  "textPlain": {
+    "status": 400,
+    "body": "{\"error\":\"INVALID_ITEMS\"}"
+  },
+  "noBody": {
+    "status": 500,
+    "body": "{\"error\":\"INTERNAL_ERROR\"}"
+  },
+  "faulty": {
+    "status": 500,
+    "body": {
+      "error": "INTERNAL_ERROR"
+    }
+  },
+  "repairStatus": "awaiting_approval",
+  "checks": [
+    {
+      "name": "بدون فیلد اختیاری تخفیف",
+      "passed": true
+    },
+    {
+      "name": "تخفیف خالی",
+      "passed": true
+    },
+    {
+      "name": "تخفیف معتبر",
+      "passed": true
+    },
+    {
+      "name": "ورودی تخفیف نامعتبر",
+      "passed": true
+    },
+    {
+      "name": "آیتم نامعتبر",
+      "passed": true
+    },
+    {
+      "name": "حالت نگه‌داشته‌شده: دو آیتم",
+      "passed": true
+    },
+    {
+      "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+      "passed": true
+    }
+  ],
+  "repaired": {
+    "hugeProduct": {
+      "status": 200,
+      "body": {
+        "subtotal": 18014398509481982,
+        "discount": 0,
+        "total": 18014398509481982
+      }
+    },
+    "hugeExponent": {
+      "status": 200,
+      "body": {
+        "subtotal": null,
+        "discount": 0,
+        "total": null
+      }
+    },
+    "overflowByMany": {
+      "status": 200,
+      "body": {
+        "subtotal": null,
+        "discount": 0,
+        "total": null
+      }
+    },
+    "maxSafe": {
+      "status": 200,
+      "body": {
+        "subtotal": 9007199254740991,
+        "discount": 0,
+        "total": 9007199254740991
+      }
+    },
+    "discountOverflow": {
+      "status": 200,
+      "body": {
+        "subtotal": 100,
+        "discount": 500,
+        "total": 0
+      }
+    },
+    "negativeZero": {
+      "status": 200,
+      "body": {
+        "subtotal": 0,
+        "discount": 0,
+        "total": 0
+      }
+    }
+  },
+  "afterRepair": {
+    "status": 200,
+    "body": {
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200
+    }
+  }
+}

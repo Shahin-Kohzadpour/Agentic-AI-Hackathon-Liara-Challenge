@@ -1,0 +1,24 @@
+Observed run (pre-fix disposable checkout, real Codex SDK 0.163.0 / CLI 0.149.1)
+Command: PORT=4402 npm run test:browser
+Output excerpt:
+{"phase":"initial-demo-request","status":500,"body":{"error":"INTERNAL_ERROR"}}
+Actual Codex repair started through browser UI.
+{"phase":"real-codex-result","status":"failed","error":"فراخوانی خارج از قرارداد تابع نمونه مجاز نیست."}
+AssertionError [ERR_ASSERTION]: فراخوانی خارج از قرارداد تابع نمونه مجاز نیست.
++ actual - expected
++ 'failed'
+- 'awaiting_approval'
+BROWSER_EXIT=1
+
+Follow-up identical run (same tree, same prompt):
+{"phase":"real-codex-result","status":"awaiting_approval","passed":true}
+BROWSER_EXIT=0
+
+Direct agent samples (3/3 valid, same tree):
+See probe-repair.txt.
+
+Interpretation: model output is nondeterministic; the original call allowlist
+rejected at least one legitimate repair variant. The rejected source was not
+persisted by the pre-fix code (validation happened before diagnosis/snapshot),
+so the exact callee is unknown. The fix expands the allowlist and retries once
+with the validator error.

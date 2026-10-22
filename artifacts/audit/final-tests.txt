@@ -1,0 +1,39 @@
+
+> liara-sre-agent@0.1.0 test
+> node --import tsx --test tests/*.test.ts
+
+✔ real defect is reproduced; unobserved HTTP health is not fabricated (1277.075707ms)
+✔ independent verifier passes repaired candidate including held-out cases (375.4405ms)
+✔ unapproved apply is refused without changing deployment (332.683894ms)
+✔ rejection never changes source or marks incident resolved (329.868742ms)
+✔ approved recovery succeeds and replay causes no second deployment (554.86055ms)
+✔ stale base revision invalidates approval (346.068501ms)
+✔ source tampering after approval is blocked (337.071036ms)
+✔ expired approval cannot execute (357.016292ms)
+✔ bad patches cannot reach approval (326.421011ms)
+✔ sandbox cannot read host files or deployment credentials (114.808312ms)
+✔ redaction removes structured secrets and known credentials (5.18095ms)
+✔ candidate contract blocks imports and constructor escapes (5.789185ms)
+✔ helper initialization does not clear another active project lock (15.702206ms)
+✔ a second server cannot claim the same data directory (19.326402ms)
+✔ READY plus public 502 is a failed deployment, never successful setup (21.344931ms)
+✔ a late successful HTTP check reconciles the same release without redeploy (363.741821ms)
+✔ faulty prior source is not offered as known-good rollback (659.007159ms)
+✔ HTTP boundary requires private human session and refuses MCP approval (2642.711822ms)
+✔ candidate contract accepts legitimate pure variants and rejects tagged templates (10.056327ms)
+✔ one validator rejection triggers a bounded retry (339.8763ms)
+✔ tampered action digest cannot execute (336.662485ms)
+✔ live reset is explicitly labeled as an intentional faulty deployment (35.75462ms)
+✔ demo boundary distinguishes missing body and oversized input (42.333645ms)
+✔ SSE flushes headers immediately and is unavailable to the tool capability (196.368283ms)
+✔ naive missing-discount repair fails the new overflow boundaries (131.860454ms)
+✔ fixture HTTP server rejects malformed JSON with 400 (272.181142ms)
+✔ startup recovery marks interrupted work failed and clears only stale locks (14.728691ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19204.704437

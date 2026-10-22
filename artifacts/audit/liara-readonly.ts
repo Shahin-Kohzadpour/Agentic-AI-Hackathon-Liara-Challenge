@@ -1,0 +1,16 @@
+import { Liara } from '/home/arash/Projects/liara-sre-agent/src/liara.ts';
+import { writeFile } from 'node:fs/promises';
+const liara=new Liara('/home/arash/Projects/liara-sre-agent');
+const out:any={at:new Date().toISOString(),readOnly:true,project:process.env.LIARA_PROJECT,teamMatchesExpected:process.env.LIARA_TEAM_ID==='6accf9ba0841df6d77589e99',authScheme:process.env.LIARA_AUTH_SCHEME||'(unset)'};
+const run=async(name:string,fn:()=>Promise<any>)=>{try{return await fn()}catch(e){return {error:String((e as Error).message).slice(0,200)}}};
+out.projects=await run('projects',async()=>{const r=await liara.request('/v1/projects');return {ok:true,count:r.projects?.length,names:r.projects?.map((p:any)=>p.project_id),statuses:r.projects?.map((p:any)=>p.status)};});
+out.me=await run('me',async()=>{const r=await liara.request('/v1/me');return {ok:true,keys:Object.keys(r),teamKeys:r.teams?Object.keys(r.teams):undefined,plansAvailable:Object.values(r.plans?.projects??{}).filter((p:any)=>p.available).length};});
+out.currentRelease=await run('release',()=>liara.currentRelease(process.env.LIARA_PROJECT!));
+out.releases=await run('releases',async()=>{const r=await liara.request(`/v1/projects/${process.env.LIARA_PROJECT}/releases`);return {ok:true,currentRelease:r.currentRelease,releases:(r.releases??[]).slice(0,6).map((x:any)=>({id:x._id,state:x.state,createdAt:x.createdAt,message:x.message}))};});
+const ev=await liara.collect(process.env.LIARA_PROJECT!);
+out.evidence=ev.map(e=>({kind:e.kind,available:e.available,title:e.title,limitation:e.limitation,observedAt:e.observedAt,dataSummary:e.kind==='logs'?{lines:(e.data as any)?.lines?.length,first:(e.data as any)?.lines?.[0]?.timestamp,last:(e.data as any)?.lines?.slice(-1)?.[0]?.timestamp,releaseIds:[...new Set(((e.data as any)?.lines??[]).map((l:any)=>l.releaseId))]}:e.kind==='releases'?{currentRelease:(e.data as any)?.currentRelease,count:(e.data as any)?.releases?.length}:e.kind==='cpu'||e.kind==='memory'?{keys:Object.keys(e.data??{})}:undefined}));
+out.http=await liara.verifyHttp(process.env.LIARA_PROJECT!);
+out.overflow=await liara.summary(process.env.LIARA_PROJECT!,{items:[{price:1e308,quantity:2}]});
+out.emptyBody=await run('empty',()=>liara.summary(process.env.LIARA_PROJECT!,undefined));
+await writeFile('/home/arash/Projects/liara-sre-agent/artifacts/audit/liara-readonly.json',JSON.stringify(out,null,2));
+console.log(JSON.stringify({...out,evidence:out.evidence?.map((e:any)=>({kind:e.kind,available:e.available,lines:e.dataSummary?.lines}))},null,1));

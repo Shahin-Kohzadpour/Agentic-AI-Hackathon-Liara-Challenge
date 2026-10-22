@@ -1,0 +1,876 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-22T14:00:02.006Z",
+  "project": {
+    "id": "local",
+    "name": "demo-shop",
+    "mode": "local",
+    "currentSnapshot": "src_35c52c683da8ccb0",
+    "revision": 2
+  },
+  "incident": {
+    "id": "inc_1c9cbe3fdc6af1ac",
+    "projectId": "local",
+    "request": "سایت باز می‌شود، اما خلاصهٔ سفارش خطای ۵۰۰ دارد. علت را پیدا کن و اصلاح را برای تأیید من آماده کن.",
+    "status": "resolved",
+    "createdAt": "2026-10-22T13:58:13.037Z",
+    "updatedAt": "2026-10-22T13:58:49.525Z",
+    "evidence": [
+      {
+        "id": "ev_e5fd175c6400b5ab",
+        "kind": "http",
+        "title": "درخواست کاربردی خلاصهٔ سفارش",
+        "observedAt": "2026-10-22T13:58:13.371Z",
+        "available": true,
+        "data": {
+          "input": {
+            "items": [
+              {
+                "price": 100,
+                "quantity": 2
+              }
+            ]
+          },
+          "status": 500,
+          "body": {
+            "error": "INTERNAL_ERROR"
+          }
+        }
+      },
+      {
+        "id": "ev_ab505be827195423",
+        "kind": "logs",
+        "title": "لاگ واقعی اجرای محلی",
+        "observedAt": "2026-10-22T13:58:13.371Z",
+        "available": true,
+        "data": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:15:36)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      },
+      {
+        "id": "ev_af7b338e90468bd7",
+        "kind": "health",
+        "title": "بررسی سلامت مستقل",
+        "observedAt": "2026-10-22T13:58:13.221Z",
+        "available": true,
+        "data": {
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "scope": "local-demo"
+          }
+        }
+      },
+      {
+        "id": "ev_ed280b8c54c2900a",
+        "kind": "source",
+        "title": "منبع مستقر در تمرین محلی",
+        "observedAt": "2026-10-22T13:58:13.371Z",
+        "available": true,
+        "data": {
+          "snapshot": "src_7a0e998e2b5e734f",
+          "digest": "4f658c75f8b435cb9248d8fedec5895fc6e6db83e549c489680003c93bef7c43",
+          "revision": 1
+        }
+      },
+      {
+        "id": "ev_c227243dd0902d4e",
+        "kind": "cpu",
+        "title": "منابع لیارا",
+        "observedAt": "2026-10-22T13:58:13.371Z",
+        "available": false,
+        "data": null,
+        "limitation": "این پروژه محلی است؛ دادهٔ منابع لیارا شبیه‌سازی نمی‌شود."
+      }
+    ],
+    "baseline": {
+      "passed": false,
+      "checks": [
+        {
+          "name": "بدون فیلد اختیاری تخفیف",
+          "passed": false,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 500,
+            "body": {
+              "error": "INTERNAL_ERROR"
+            },
+            "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:15:36)\n    at invoke (file:///runner/verify.mjs:3:33)\n    at file:///runner/verify.mjs:17:63\n    at Array.map (<anonymous>)\n    at file:///runner/verify.mjs:17:20\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+          }
+        },
+        {
+          "name": "تخفیف خالی",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف معتبر",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          }
+        },
+        {
+          "name": "ورودی تخفیف نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        },
+        {
+          "name": "آیتم نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "آیتم null",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: دو آیتم",
+          "passed": false,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 187,
+              "discount": 0,
+              "total": 187
+            }
+          },
+          "actual": {
+            "status": 500,
+            "body": {
+              "error": "INTERNAL_ERROR"
+            },
+            "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:15:36)\n    at invoke (file:///runner/verify.mjs:3:33)\n    at file:///runner/verify.mjs:17:63\n    at Array.map (<anonymous>)\n    at file:///runner/verify.mjs:17:20\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        },
+        {
+          "name": "حالت مرزی: قیمت غیرایمن",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت مرزی: سرریز حاصل‌ضرب",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت مرزی: بزرگ‌ترین قیمت مجاز",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 9007199254740991,
+              "discount": 0,
+              "total": 9007199254740991
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 9007199254740991,
+              "discount": 0,
+              "total": 9007199254740991
+            }
+          }
+        }
+      ],
+      "durationMs": 124,
+      "source": "isolated-contract-tests"
+    },
+    "diagnosis": "فیلد discounts اختیاری است، اما reduce بدون بررسی روی آن اجرا می‌شود؛ در نبود این فیلد، خطای TypeError ایجاد می‌شود.",
+    "change": "برای discounts تعریف‌نشده، آرایهٔ خالی در محاسبه استفاده شد تا تخفیف صفر باشد. اعتبارسنجی‌ها و ساختار پاسخ حفظ شدند.",
+    "threadId": "01a163e7-ef52-72b1-8c55-7d6ffa50ac4e",
+    "diff": "Index: summary.mjs\n===================================================================\n--- summary.mjs\tنسخهٔ فعلی\n+++ summary.mjs\tاصلاح پیشنهادی\n@@ -11,9 +11,9 @@\n   const subtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);\n   if (!Number.isSafeInteger(subtotal)) {\n     return { status: 400, body: { error: 'INVALID_ITEMS' } };\n   }\n-  const discount = order.discounts.reduce((sum, value) => sum + value, 0);\n+  const discount = (order.discounts === undefined ? [] : order.discounts).reduce((sum, value) => sum + value, 0);\n   if (!Number.isSafeInteger(discount)) {\n     return { status: 400, body: { error: 'INVALID_DISCOUNTS' } };\n   }\n   return { status: 200, body: { subtotal, discount, total: Math.max(0, subtotal - discount) } };\n",
+    "candidate": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "بدون فیلد اختیاری تخفیف",
+          "passed": true
+        },
+        {
+          "name": "تخفیف خالی",
+          "passed": true
+        },
+        {
+          "name": "تخفیف معتبر",
+          "passed": true
+        },
+        {
+          "name": "ورودی تخفیف نامعتبر",
+          "passed": true
+        },
+        {
+          "name": "آیتم نامعتبر",
+          "passed": true
+        },
+        {
+          "name": "آیتم null",
+          "passed": true
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: دو آیتم",
+          "passed": true
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+          "passed": true
+        },
+        {
+          "name": "حالت مرزی: قیمت غیرایمن",
+          "passed": true
+        },
+        {
+          "name": "حالت مرزی: سرریز حاصل‌ضرب",
+          "passed": true
+        },
+        {
+          "name": "حالت مرزی: بزرگ‌ترین قیمت مجاز",
+          "passed": true
+        }
+      ],
+      "durationMs": 108,
+      "source": "isolated-contract-tests"
+    },
+    "actionId": "act_e845b07fde37ff5b",
+    "releaseId": "local-fe9a8ac764d5",
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "اجرای دوبارهٔ درخواست اصلی",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "بدون فیلد اختیاری تخفیف",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف خالی",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف معتبر",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          }
+        },
+        {
+          "name": "ورودی تخفیف نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        },
+        {
+          "name": "آیتم نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "آیتم null",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: دو آیتم",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 187,
+              "discount": 0,
+              "total": 187
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 187,
+              "discount": 0,
+              "total": 187
+            }
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        },
+        {
+          "name": "حالت مرزی: قیمت غیرایمن",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت مرزی: سرریز حاصل‌ضرب",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت مرزی: بزرگ‌ترین قیمت مجاز",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 9007199254740991,
+              "discount": 0,
+              "total": 9007199254740991
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 9007199254740991,
+              "discount": 0,
+              "total": 9007199254740991
+            }
+          }
+        }
+      ],
+      "durationMs": 313,
+      "source": "http"
+    }
+  },
+  "action": {
+    "id": "act_e845b07fde37ff5b",
+    "runId": "inc_1c9cbe3fdc6af1ac",
+    "projectId": "local",
+    "kind": "deploy",
+    "status": "succeeded",
+    "createdAt": "2026-10-22T13:58:47.762Z",
+    "expiresAt": "2026-10-22T14:28:47.762Z",
+    "baseRevision": 1,
+    "baseSnapshot": "src_7a0e998e2b5e734f",
+    "snapshotId": "src_35c52c683da8ccb0",
+    "digest": "fe9a8ac764d5aa99feb91243ac26549847b3ee0fb4fa4ac693c812a0e0525be0",
+    "title": "انتشار اصلاح آزموده‌شده",
+    "summary": "محلی · demo-shop · منبع fe9a8ac764d5",
+    "risk": "فقط منبع تمرین محلی تغییر می‌کند؛ هزینه یا تغییر ابری ندارد.",
+    "cost": "بدون هزینهٔ زیرساخت ابری",
+    "approvedAt": "2026-10-22T13:58:49.169Z",
+    "executedAt": "2026-10-22T13:58:49.205Z",
+    "result": {
+      "releaseId": "local-fe9a8ac764d5",
+      "verification": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "اجرای دوبارهٔ درخواست اصلی",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            }
+          },
+          {
+            "name": "بدون فیلد اختیاری تخفیف",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            }
+          },
+          {
+            "name": "تخفیف خالی",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            }
+          },
+          {
+            "name": "تخفیف معتبر",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 30,
+                "total": 170
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 30,
+                "total": 170
+              }
+            }
+          },
+          {
+            "name": "ورودی تخفیف نامعتبر",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_DISCOUNTS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_DISCOUNTS"
+              }
+            }
+          },
+          {
+            "name": "آیتم نامعتبر",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            }
+          },
+          {
+            "name": "آیتم null",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            }
+          },
+          {
+            "name": "حالت نگه‌داشته‌شده: دو آیتم",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 187,
+                "discount": 0,
+                "total": 187
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 187,
+                "discount": 0,
+                "total": 187
+              }
+            }
+          },
+          {
+            "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_DISCOUNTS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_DISCOUNTS"
+              }
+            }
+          },
+          {
+            "name": "حالت مرزی: قیمت غیرایمن",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            }
+          },
+          {
+            "name": "حالت مرزی: سرریز حاصل‌ضرب",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_ITEMS"
+              }
+            }
+          },
+          {
+            "name": "حالت مرزی: بزرگ‌ترین قیمت مجاز",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 9007199254740991,
+                "discount": 0,
+                "total": 9007199254740991
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 9007199254740991,
+                "discount": 0,
+                "total": 9007199254740991
+              }
+            }
+          }
+        ],
+        "durationMs": 313,
+        "source": "http"
+      }
+    }
+  },
+  "events": [
+    {
+      "id": 1,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:13.046Z",
+      "status": "collecting",
+      "message": "شواهد برنامه، نسخه و درخواست مسئله‌دار جمع‌آوری می‌شوند."
+    },
+    {
+      "id": 2,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:13.506Z",
+      "status": "patching",
+      "message": "خطا در محیط جدا بازتولید شد. Codex اصلاح محدود را آماده می‌کند."
+    },
+    {
+      "id": 3,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:13.576Z",
+      "status": "patching",
+      "message": "درخواست اصلاح محدود به Codex ارسال شد؛ عامل اختیار انتشار ندارد."
+    },
+    {
+      "id": 4,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:47.649Z",
+      "status": "testing",
+      "message": "اصلاح پیشنهادی با آزمون‌های مستقل و موارد نگه‌داشته‌شده بررسی می‌شود."
+    },
+    {
+      "id": 5,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:47.763Z",
+      "status": "awaiting_approval",
+      "message": "اصلاح آزموده‌شده آماده است. انتشار تنها پس از تأیید انسانی انجام می‌شود."
+    },
+    {
+      "id": 6,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:49.208Z",
+      "status": "deploying",
+      "message": "منبع تأییدشده از مسیر کنترل‌شده منتشر می‌شود."
+    },
+    {
+      "id": 7,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:49.209Z",
+      "status": "verifying",
+      "message": "درخواست کاربردی و قرارداد پاسخ روی نسخهٔ منتشرشده دوباره بررسی می‌شوند."
+    },
+    {
+      "id": 8,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:49.526Z",
+      "status": "resolved",
+      "message": "رفع خطا با اجرای دوبارهٔ درخواست و بررسی قرارداد پاسخ تأیید شد."
+    },
+    {
+      "id": 9,
+      "runId": "inc_1c9cbe3fdc6af1ac",
+      "at": "2026-10-22T13:58:49.526Z",
+      "status": "completed",
+      "message": "انتشار و بررسی کاربردی موفق بود."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-22T13:58:51.180Z",
+  "before": {
+    "status": 500,
+    "body": {
+      "error": "INTERNAL_ERROR"
+    }
+  },
+  "after": {
+    "status": 200,
+    "body": {
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200
+    }
+  },
+  "pageErrors": [],
+  "desktopOverflow": false,
+  "mobileOverflow": false,
+  "repairInvoked": true,
+  "preparedRepairUsed": false,
+  "repair": "Actual Codex SDK",
+  "deployment": "local rehearsal only"
+}

@@ -1,0 +1,252 @@
+{
+  "http": {
+    "stateNoAuth": {
+      "status": 401,
+      "body": {
+        "error": "برای ادامه، نشست خصوصی داشبورد را باز کنید."
+      }
+    },
+    "reportNoAuth": {
+      "status": 401,
+      "body": {
+        "error": "برای ادامه، نشست خصوصی داشبورد را باز کنید."
+      }
+    },
+    "sessionWrongKey": {
+      "status": 403,
+      "body": {
+        "error": "کلید ورود معتبر نیست."
+      }
+    },
+    "sessionNoOrigin": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "sessionBadHost": {
+      "status": 403,
+      "body": {
+        "error": "Host مجاز نیست؛ از نشانی 127.0.0.1 استفاده کنید."
+      }
+    },
+    "loginStatus": 200,
+    "stateWithSession": {
+      "status": 200,
+      "body": {
+        "projects": [
+          {
+            "id": "local",
+            "name": "demo-shop",
+            "mode": "local",
+            "currentSnapshot": "src_aabf8852d58ff974",
+            "revision": 1
+          }
+        ],
+        "incidents": [],
+        "actions": [],
+        "events": [],
+        "capabilities": {
+          "liaraConfigured": false,
+          "teamConfigured": false,
+          "agent": "Codex",
+          "scope": "registered-node-demo",
+          "api": "https://developers.liara.ir/",
+          "localIsolation": "bubblewrap: no network, read-only source, no credentials"
+        }
+      }
+    },
+    "incidentNoCsrf": {
+      "status": 403,
+      "body": {
+        "error": "تأیید نشست معتبر نیست."
+      }
+    },
+    "incidentWrongCsrf": {
+      "status": 403,
+      "body": {
+        "error": "تأیید نشست معتبر نیست."
+      }
+    },
+    "evilOrigin": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "prefixOrigin": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "malformedJson": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "oversize": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "nullBody": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "textPlain": {
+      "status": 403,
+      "body": {
+        "error": "مبدأ درخواست معتبر نیست."
+      }
+    },
+    "input_missingDiscounts": {
+      "status": 500,
+      "body": {
+        "error": "INTERNAL_ERROR"
+      },
+      "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    "input_hugeProduct": {
+      "status": 500,
+      "body": {
+        "error": "INTERNAL_ERROR"
+      },
+      "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    "input_hugeExponent": {
+      "status": 500,
+      "body": {
+        "error": "INTERNAL_ERROR"
+      },
+      "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    "input_floatPrice": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_ITEMS"
+      }
+    },
+    "input_negativeQty": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_ITEMS"
+      }
+    },
+    "input_emptyItems": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_ITEMS"
+      }
+    },
+    "input_stringItems": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_ITEMS"
+      }
+    },
+    "input_nullOrder": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_ITEMS"
+      }
+    },
+    "input_discount51": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_DISCOUNTS"
+      }
+    },
+    "input_discountFloat": {
+      "status": 400,
+      "body": {
+        "error": "INVALID_DISCOUNTS"
+      }
+    },
+    "input_protoKey": {
+      "status": 500,
+      "body": {
+        "error": "INTERNAL_ERROR"
+      },
+      "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    "symlinkTamper": "BLOCKED: فایل غیرمجاز در منبع انتشار."
+  },
+  "candidate": {
+    "importFs": "BLOCKED: اصلاح باید فقط تابع ثبت‌شدهٔ summarizeOrder را تعریف کند.",
+    "ctorEscape": "BLOCKED: فراخوانی خارج از قرارداد تابع نمونه مجاز نیست.",
+    "protoAccess": "BLOCKED: دسترسی غیرمجاز در اصلاح پیشنهادی.",
+    "globalThisIdent": "BLOCKED: دسترسی غیرمجاز در اصلاح پیشنهادی.",
+    "processIdent": "BLOCKED: دسترسی غیرمجاز در اصلاح پیشنهادی.",
+    "computedAccess": "BLOCKED: اصلاح از محدودهٔ تابع خالص نمونه خارج است.",
+    "newExpr": "BLOCKED: اصلاح از محدودهٔ تابع خالص نمونه خارج است.",
+    "whileLoop": "BLOCKED: اصلاح از محدودهٔ تابع خالص نمونه خارج است.",
+    "forLoop": "BLOCKED: اصلاح از محدودهٔ تابع خالص نمونه خارج است.",
+    "taggedTemplate": "ALLOWED",
+    "recursion": "BLOCKED: فراخوانی خارج از قرارداد تابع نمونه مجاز نیست.",
+    "throwOnly": "BLOCKED: اصلاح از محدودهٔ تابع خالص نمونه خارج است.",
+    "arrowExport": "BLOCKED: اصلاح باید فقط تابع ثبت‌شدهٔ summarizeOrder را تعریف کند.",
+    "extraFunction": "BLOCKED: اصلاح باید فقط تابع ثبت‌شدهٔ summarizeOrder را تعریف کند.",
+    "validMinimal": "ALLOWED"
+  },
+  "sandbox": {
+    "network": {
+      "ms": 106,
+      "result": {
+        "status": 200,
+        "body": {
+          "x": "function"
+        }
+      }
+    },
+    "hostFile": {
+      "ms": 114,
+      "result": {
+        "status": 500,
+        "body": {
+          "error": "INTERNAL_ERROR"
+        },
+        "exception": "Error: ENOENT: no such file or directory, open '/etc/passwd'\n    at readFileSync (node:fs:539:20)\n    at summarizeOrder (file:///app/summary.mjs:1:101)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    "envToken": {
+      "ms": 112,
+      "result": {
+        "status": 200,
+        "body": {
+          "x": null,
+          "home": "/tmp"
+        }
+      }
+    },
+    "spawn": {
+      "ms": 116,
+      "result": {
+        "status": 500,
+        "body": {
+          "error": "INTERNAL_ERROR"
+        },
+        "exception": "Error: spawnSync /bin/sh ENOENT\n    at Object.spawnSync (node:internal/child_process:1144:20)\n    at spawnSync (node:child_process:928:24)\n    at execSync (node:child_process:1009:15)\n    at summarizeOrder (file:///app/summary.mjs:1:108)\n    at file:///runner/invoke.mjs:2:34\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    "writeTmp": {
+      "ms": 108,
+      "result": {
+        "status": 200,
+        "body": {
+          "x": "x"
+        }
+      }
+    },
+    "infinite": {
+      "error": "مهلت اجرای عملیات به پایان رسید."
+    },
+    "oom": {
+      "error": "اجرای محیط جدا ناموفق بود: \n<--- Last few GCs --->\n\n[2:0x349ec000]      433 ms: Mark-Compact (reduce) 102.1 (103.9) -> 102.0 (103.6) MB, pooled: 0.0 MB, 27.44 / 0.00 ms (average mu = 0.131, current mu = 0.003) last resort; GC in old space requested\n[2:0x349ec000]      468 ms: Mark-Compact (reduce) 1"
+    }
+  }
+}

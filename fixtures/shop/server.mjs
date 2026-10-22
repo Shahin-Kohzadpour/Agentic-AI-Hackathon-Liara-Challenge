@@ -8,7 +8,10 @@ const server=http.createServer(async(req,res)=>{
     let raw='';
     try {
       for await(const chunk of req){raw+=chunk;if(raw.length>16000)return send(res,413,{error:'TOO_LARGE'});}
-      const result=summarizeOrder(JSON.parse(raw)); return send(res,result.status,result.body);
+      let order;
+      // Malformed or empty JSON is a client error, not a runtime failure.
+      try{order=JSON.parse(raw);}catch{return send(res,400,{error:'INVALID_JSON'});}
+      const result=summarizeOrder(order); return send(res,result.status,result.body);
     } catch(error) {
       console.error(JSON.stringify({event:'order_summary_failed',message:error.message,stack:error.stack}));
       return send(res,500,{error:'INTERNAL_ERROR'});

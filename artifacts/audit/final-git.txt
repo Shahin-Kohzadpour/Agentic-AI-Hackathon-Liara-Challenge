@@ -1,0 +1,11 @@
+8dad40ea4d2765edffdb8b88a9d3b761a1d3c2e4
+ M fixtures/shop/server.mjs
+ M fixtures/shop/summary.mjs
+ M package-lock.json
+ M package.json
+ M runner/verify.mjs
+ M src/candidate.ts
+ M src/core.ts
+ M src/server.ts
+ M src/web/style.css
+ M tests/core.test.ts

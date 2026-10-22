@@ -1,0 +1,14 @@
+BEFORE (WCAG AA normal text requires 4.5:1)
+  stat small                   #99a28f on #ffffff = 2.65
+  event text                   #86947b on #ffffff = 3.21
+  page heading p               #859180 on #ffffff = 3.3
+  risk                         #b6a16c on #faf7ed = 2.36
+  approval expiry              #a5ad9b on #ffffff = 2.32
+  footer                       #adb5a1 on #f4f5f0 = 1.94
+AFTER
+  stat/event/heading/tag       #5f6b5c on #ffffff = 5.61
+  tag background               #5f6b5c on #f3f5ef = 5.11
+  report limit                 #5f6b5c on #f7f8f1 = 5.25
+  risk                         #755f22 on #faf7ed = 5.73
+  approval expiry              #65705f on #ffffff = 5.2
+  footer                       #65705f on #f4f5f0 = 4.75

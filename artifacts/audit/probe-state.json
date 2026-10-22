@@ -1,0 +1,41 @@
+{
+  "concurrent": {
+    "results": [
+      {
+        "ok": true,
+        "status": "succeeded"
+      },
+      {
+        "ok": false,
+        "error": "یک عملیات دیگر برای این پروژه در حال اجراست."
+      }
+    ],
+    "verifications": 1,
+    "revision": 2,
+    "runStatus": "resolved"
+  },
+  "digestTamper": {
+    "executed": true,
+    "status": "succeeded",
+    "revision": 2
+  },
+  "failedVerification": {
+    "actionStatus": "failed",
+    "error": "بررسی کاربردی پس از انتشار ناموفق بود. وضعیت آمادهٔ زیرساخت به معنی موفقیت برنامه نیست.",
+    "hasVerification": true,
+    "checks": 1,
+    "revision": 2
+  },
+  "rollback": {
+    "prepared": false,
+    "error": "منبع قبلی از آزمون سلامت مستقل عبور نمی‌کند؛ به‌عنوان نسخهٔ سالم پیشنهاد نمی‌شود."
+  },
+  "resetOnLiara": {
+    "kind": "deploy",
+    "projectId": "local",
+    "title": "انتشار برنامهٔ نمونه",
+    "risk": "این عملیات سرویس واقعی را تغییر می‌دهد و ممکن است وقفه داشته باشد. منبع قبلی نگهداری می‌شود؛ پیشنهاد بازگشت به آزمون سلامت و تأیید جداگانه نیاز دارد.",
+    "digest": "d00826f3e5175d8c529ac298694dda95bd23b7e12824609c36a9ad263fb5b834",
+    "baseRelease": "before"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "network": {
+    "ms": 241,
+    "result": {
+      "status": 200,
+      "body": {
+        "x": "blocked:TypeError"
+      }
+    }
+  },
+  "execFile": {
+    "ms": 1009,
+    "result": {
+      "status": 200,
+      "body": {
+        "x": "uid=1000 gid=1000 groups=1000,65534"
+      }
+    }
+  },
+  "hostEnvFile": {
+    "ms": 107,
+    "result": {
+      "status": 200,
+      "body": {
+        "x": "blocked"
+      }
+    }
+  }
+}

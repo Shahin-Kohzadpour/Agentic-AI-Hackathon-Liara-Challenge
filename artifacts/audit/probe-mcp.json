@@ -1,0 +1,78 @@
+{
+  "tools": [
+    {
+      "name": "liara_projects",
+      "description": "List registered local and Liara projects; no secret values.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "liara_diagnostics",
+      "description": "Collect sanitized logs, events, releases, and resource evidence with timestamps and limitations.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "incident_start",
+      "description": "Investigate and prepare a code repair for the registered sample. Does not deploy; human approval is required."
+    },
+    {
+      "name": "deployment_prepare",
+      "description": "Prepare a source-bound deployment or restart plan without changing the service."
+    },
+    {
+      "name": "deployment_apply",
+      "description": "Execute a stored action ONLY if a human has already approved it in the dashboard. Cannot approve or change the plan.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true
+      }
+    },
+    {
+      "name": "incident_report",
+      "description": "Read incident evidence, independent test results, diagnosis, and recovery status.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ],
+  "projects": {
+    "isError": false,
+    "text": "{\"projects\":[{\"id\":\"local\",\"name\":\"demo-shop\",\"mode\":\"local\",\"currentSnapshot\":\"src_de790e89abe59c0f\",\"revision\":1}],\"scope\":\"registered-node-demo\"}"
+  },
+  "badProject": {
+    "isError": true,
+    "text": "{\"error\":\"پروژه پیدا نشد.\"}"
+  },
+  "missingArg": {
+    "isError": true,
+    "text": "MCP error -32602: Input validation error: Invalid arguments for tool incident_start: Invalid input: expected string, received undefined at request"
+  },
+  "shortRequest": {
+    "isError": true,
+    "text": "MCP error -32602: Input validation error: Invalid arguments for tool incident_start: Too small: expected string to have >=5 characters at request"
+  },
+  "unknownTool": {
+    "isError": true,
+    "text": "MCP error -32602: Tool not_a_tool not found"
+  },
+  "badRun": {
+    "isError": true,
+    "text": "{\"error\":\"رخداد پیدا نشد.\"}"
+  },
+  "applyUnknown": {
+    "isError": true,
+    "text": "{\"error\":\"برنامهٔ عملیات پیدا نشد.\"}"
+  },
+  "prepare": {
+    "isError": false,
+    "text": "{\"id\":\"act_6d1d45192c599e0f\",\"projectId\":\"local\",\"kind\":\"deploy\",\"status\":\"pending\",\"createdAt\":\"2026-10-22T13:15:41.052Z\",\"expiresAt\":\"2026-10-22T13:45:41.052Z\",\"baseRevision\":1,\"baseSnapshot\":\"src_de790e89abe59c0f\",\"snapshotId\":\"src_de790e89abe59c0f\",\"digest\":\"d00826f3e5175d8c529ac298694dda95bd23b"
+  },
+  "unapprovedApply": {
+    "isError": true,
+    "text": "{\"error\":\"برنامهٔ عملیات پیدا نشد.\"}"
+  },
+  "stderr": ""
+}
