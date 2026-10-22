@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-22T12:02:51.287Z",
+  "before": {
+    "status": 200,
+    "body": {
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200
+    }
+  },
+  "after": {
+    "status": 200,
+    "body": {
+      "subtotal": 200,
+      "discount": 0,
+      "total": 200
+    }
+  },
+  "pageErrors": [],
+  "desktopOverflow": false,
+  "mobileOverflow": false,
+  "repairInvoked": false,
+  "preparedRepairUsed": false,
+  "repair": "No repair invoked: the local sample was already recovered",
+  "deployment": "local rehearsal only"
+}

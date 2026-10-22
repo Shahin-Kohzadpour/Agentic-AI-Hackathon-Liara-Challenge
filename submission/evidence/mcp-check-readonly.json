@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-22T12:02:29.798Z",
+  "tools": [
+    "liara_projects",
+    "liara_diagnostics",
+    "incident_start",
+    "deployment_prepare",
+    "deployment_apply",
+    "incident_report"
+  ],
+  "projects": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"projects\":[{\"id\":\"liara\",\"name\":\"negahban-demo-4d0934\",\"mode\":\"liara\",\"currentSnapshot\":\"src_fe981e49ee49caf1\",\"revision\":3,\"remoteRelease\":\"6ad9f90e743f4acf4fad6877\"},{\"id\":\"local\",\"name\":\"demo-shop\",\"mode\":\"local\",\"currentSnapshot\":\"src_5498eabe7f85de0c\",\"revision\":2}],\"scope\":\"registered-node-demo\"}"
+      }
+    ],
+    "isError": false
+  }
+}

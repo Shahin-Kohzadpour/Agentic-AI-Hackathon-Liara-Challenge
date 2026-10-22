@@ -1,0 +1,158 @@
+{
+  "action": {
+    "id": "act_a98c3d6852e9055a",
+    "runId": "inc_c918d3479d8df540",
+    "projectId": "liara",
+    "kind": "deploy",
+    "status": "pending",
+    "createdAt": "2026-10-22T11:40:43.449Z",
+    "expiresAt": "2026-10-22T12:10:43.449Z",
+    "baseRevision": 2,
+    "baseSnapshot": "src_03b96e055bd19965",
+    "baseRelease": "6ad9f588c588f1bc8f9314a4",
+    "snapshotId": "src_fe981e49ee49caf1",
+    "digest": "ca11cf806dcf6a86bc9b8033a40adfa7569860ef5ce2cb9d4453b44c266405d6",
+    "title": "انتشار اصلاح آزموده‌شده",
+    "summary": "لیارا · negahban-demo-4d0934 · منبع ca11cf806dcf",
+    "risk": "این عملیات سرویس واقعی را تغییر می‌دهد و ممکن است وقفه داشته باشد. منبع سالم قبلی برای پیشنهاد بازگشت نگهداری می‌شود.",
+    "cost": "پلن در این عملیات تغییر نمی‌کند؛ هزینهٔ سرویس فعلی لیارا ادامه دارد."
+  },
+  "diagnosis": "در نبود discounts، فراخوانی reduce روی undefined باعث TypeError و پاسخ ۵۰۰ می‌شود؛ خطای baseline این علت را تأیید می‌کند. همچنین اعضای null یا undefined در items می‌توانند اعتبارسنجی را با استثنا متوقف کنند.",
+  "change": "برای discounts حذف‌شده، آرایهٔ خالی در نظر گرفته شد و بررسی اعضای تهی به اعتبارسنجی items اضافه شد. قرارداد پاسخ و محدودیت‌های اعتبارسنجی حفظ شده‌اند. آزمون یا استقرار انجام نشده است.",
+  "diff": "Index: summary.mjs\n===================================================================\n--- summary.mjs\tنسخهٔ فعلی\n+++ summary.mjs\tاصلاح پیشنهادی\n@@ -1,12 +1,13 @@\n export function summarizeOrder(order) {\n   if (!order || !Array.isArray(order.items) || order.items.length === 0 ||\n-      order.items.some(item => !Number.isInteger(item.price) || item.price < 0 || !Number.isInteger(item.quantity) || item.quantity < 1)) {\n+      order.items.some(item => item == null || !Number.isInteger(item.price) || item.price < 0 || !Number.isInteger(item.quantity) || item.quantity < 1)) {\n     return { status: 400, body: { error: 'INVALID_ITEMS' } };\n   }\n   if (order.discounts !== undefined && (!Array.isArray(order.discounts) || order.discounts.some(value => !Number.isInteger(value) || value < 0 || value > 50))) {\n     return { status: 400, body: { error: 'INVALID_DISCOUNTS' } };\n   }\n   const subtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);\n-  const discount = order.discounts.reduce((sum, value) => sum + value, 0);\n+  const discounts = order.discounts === undefined ? [] : order.discounts;\n+  const discount = discounts.reduce((sum, value) => sum + value, 0);\n   return { status: 200, body: { subtotal, discount, total: Math.max(0, subtotal - discount) } };\n }\n",
+  "tests": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "بدون فیلد اختیاری تخفیف",
+        "passed": true,
+        "expected": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 0,
+            "total": 200
+          }
+        },
+        "actual": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 0,
+            "total": 200
+          }
+        }
+      },
+      {
+        "name": "تخفیف خالی",
+        "passed": true,
+        "expected": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 0,
+            "total": 200
+          }
+        },
+        "actual": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 0,
+            "total": 200
+          }
+        }
+      },
+      {
+        "name": "تخفیف معتبر",
+        "passed": true,
+        "expected": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 30,
+            "total": 170
+          }
+        },
+        "actual": {
+          "status": 200,
+          "body": {
+            "subtotal": 200,
+            "discount": 30,
+            "total": 170
+          }
+        }
+      },
+      {
+        "name": "ورودی تخفیف نامعتبر",
+        "passed": true,
+        "expected": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_DISCOUNTS"
+          }
+        },
+        "actual": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_DISCOUNTS"
+          }
+        }
+      },
+      {
+        "name": "آیتم نامعتبر",
+        "passed": true,
+        "expected": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_ITEMS"
+          }
+        },
+        "actual": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_ITEMS"
+          }
+        }
+      },
+      {
+        "name": "حالت نگه‌داشته‌شده: دو آیتم",
+        "passed": true,
+        "expected": {
+          "status": 200,
+          "body": {
+            "subtotal": 187,
+            "discount": 0,
+            "total": 187
+          }
+        },
+        "actual": {
+          "status": 200,
+          "body": {
+            "subtotal": 187,
+            "discount": 0,
+            "total": 187
+          }
+        }
+      },
+      {
+        "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+        "passed": true,
+        "expected": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_DISCOUNTS"
+          }
+        },
+        "actual": {
+          "status": 400,
+          "body": {
+            "error": "INVALID_DISCOUNTS"
+          }
+        }
+      }
+    ],
+    "durationMs": 110,
+    "source": "isolated-contract-tests"
+  }
+}

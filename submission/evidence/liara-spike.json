@@ -1,0 +1,673 @@
+{
+  "at": "2026-10-22T12:04:40.477Z",
+  "readOnly": true,
+  "projects": {
+    "ok": true,
+    "projects": [
+      {
+        "name": "negahban-demo-4d0934",
+        "platform": "node",
+        "status": "ACTIVE"
+      }
+    ]
+  },
+  "identity-and-plans": {
+    "ok": true,
+    "teamConfigured": true,
+    "availablePlanCount": 15
+  },
+  "evidence": [
+    {
+      "id": "ev_6d17ba6ad0853b5f",
+      "kind": "status",
+      "title": "وضعیت برنامه",
+      "observedAt": "2026-10-22T12:04:41.738Z",
+      "available": true,
+      "data": {
+        "project": {
+          "_id": "6ad9f499743f4acf4fac27e6",
+          "project_id": "negahban-demo-4d0934",
+          "type": "node",
+          "status": "ACTIVE",
+          "readOnlyRootFilesystem": true,
+          "defaultSubdomain": true,
+          "defaultSubdomainExpired": false,
+          "keepDefaultSubdomain": false,
+          "zeroDowntime": false,
+          "scale": 1,
+          "planID": "small-g2",
+          "bundlePlanID": "basic",
+          "network": {
+            "_id": "6ad9f498ec28f72532290b0b",
+            "name": "negahban-demo-4d0934"
+          },
+          "dns": [],
+          "created_at": "2026-10-22T11:33:45.487Z",
+          "hourlyPrice": 659.72,
+          "bundleHourlyPrice": 381.94,
+          "isDeployed": true,
+          "reservedDiskSpace": 0
+        }
+      }
+    },
+    {
+      "id": "ev_2dc9533917dec172",
+      "kind": "logs",
+      "title": "لاگ‌های برنامه",
+      "observedAt": "2026-10-22T12:04:41.743Z",
+      "available": true,
+      "data": {
+        "endpoint": "v2",
+        "releaseId": "6ad9f90e743f4acf4fad6877",
+        "lines": [
+          {
+            "timestamp": "1792670007801521059",
+            "releaseId": "6ad9f90e743f4acf4fad6877",
+            "stream": "stdout",
+            "message": ""
+          },
+          {
+            "timestamp": "1792670007801614152",
+            "releaseId": "6ad9f90e743f4acf4fad6877",
+            "stream": "stdout",
+            "message": "> negahban-demo-shop@1.0.0 start"
+          },
+          {
+            "timestamp": "1792670007801660126",
+            "releaseId": "6ad9f90e743f4acf4fad6877",
+            "stream": "stdout",
+            "message": "> node server.mjs"
+          },
+          {
+            "timestamp": "1792670007801701886",
+            "releaseId": "6ad9f90e743f4acf4fad6877",
+            "stream": "stdout",
+            "message": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev_91e88459423afeb0",
+      "kind": "events",
+      "title": "رویدادهای لیارا",
+      "observedAt": "2026-10-22T12:04:41.748Z",
+      "available": true,
+      "data": {
+        "data": [
+          {
+            "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+            "status": "destroy",
+            "action": "destroy",
+            "time": "1792670019",
+            "release": "6ad9f4a0ec28f72532290cf7",
+            "tag": "v1"
+          },
+          {
+            "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+            "status": "die",
+            "action": "die",
+            "time": "1792670019",
+            "release": "6ad9f588c588f1bc8f9314a4",
+            "tag": "v2"
+          },
+          {
+            "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+            "status": "stop",
+            "action": "stop",
+            "time": "1792670019",
+            "release": "6ad9f588c588f1bc8f9314a4",
+            "tag": "v2"
+          },
+          {
+            "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+            "status": "kill",
+            "action": "kill",
+            "time": "1792670019",
+            "release": "6ad9f588c588f1bc8f9314a4",
+            "tag": "v2"
+          },
+          {
+            "id": "3fef7e88a002ea5e0c849161fca3c86e781adfd573745911fd0885eead7c541f",
+            "status": "start",
+            "action": "start",
+            "time": "1792670006",
+            "release": "6ad9f90e743f4acf4fad6877",
+            "tag": "v3"
+          },
+          {
+            "id": "3fef7e88a002ea5e0c849161fca3c86e781adfd573745911fd0885eead7c541f",
+            "status": "create",
+            "action": "create",
+            "time": "1792670004",
+            "release": "6ad9f90e743f4acf4fad6877",
+            "tag": "v3"
+          },
+          {
+            "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+            "status": "die",
+            "action": "die",
+            "time": "1792669121",
+            "release": "6ad9f4a0ec28f72532290cf7",
+            "tag": "v1"
+          },
+          {
+            "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+            "status": "stop",
+            "action": "stop",
+            "time": "1792669121",
+            "release": "6ad9f4a0ec28f72532290cf7",
+            "tag": "v1"
+          },
+          {
+            "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+            "status": "kill",
+            "action": "kill",
+            "time": "1792669121",
+            "release": "6ad9f4a0ec28f72532290cf7",
+            "tag": "v1"
+          },
+          {
+            "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+            "status": "start",
+            "action": "start",
+            "time": "1792669107",
+            "release": "6ad9f588c588f1bc8f9314a4",
+            "tag": "v2"
+          },
+          {
+            "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+            "status": "create",
+            "action": "create",
+            "time": "1792669106",
+            "release": "6ad9f588c588f1bc8f9314a4",
+            "tag": "v2"
+          },
+          {
+            "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+            "status": "start",
+            "action": "start",
+            "time": "1792668902",
+            "release": "6ad9f4a0ec28f72532290cf7",
+            "tag": "v1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev_5b1287d2f5c75141",
+      "kind": "releases",
+      "title": "نسخه‌های منتشرشده",
+      "observedAt": "2026-10-22T12:04:41.751Z",
+      "available": true,
+      "data": {
+        "total": 3,
+        "currentRelease": "6ad9f90e743f4acf4fad6877",
+        "readyReleasesCount": 3,
+        "releases": [
+          {
+            "_id": "6ad9f90e743f4acf4fad6877",
+            "type": "DEPLOY",
+            "imageName": "registry.c1.liara.ir/apps/6ad9f499743f4acf4fac27e6:vbb6yiytsium",
+            "projectType": "node",
+            "state": "READY",
+            "port": 3000,
+            "buildArgs": {
+              "__NODE_MIRROR": "true",
+              "__NODE_MIRRORURL": "http://10.16.100.42/repository/npm-proxy",
+              "__NODE_GITHUBMIRRORURL": "http://10.16.100.42/repository/github-proxy",
+              "__NODE_MAPBOXMIRRORURL": "http://10.16.100.42/repository/mapbox-proxy"
+            },
+            "buildLocation": "iran",
+            "buildTimeout": 5,
+            "message": "negahban ca11cf806dcf6a86",
+            "gitInfo": {
+              "branch": null,
+              "message": null,
+              "commit": null,
+              "committedAt": null,
+              "remote": null,
+              "author": {
+                "email": null,
+                "name": null
+              },
+              "tags": []
+            },
+            "client": "@liara/cli/9.6.0 linux-x64 node-v26.7.0",
+            "disks": [],
+            "finishedAt": "2026-10-22T11:53:05.906Z",
+            "platformConfig": {
+              "version": "22",
+              "mirror": true,
+              "mirrorURL": "http://10.16.100.42/repository/npm-proxy",
+              "githubMirrorURL": "http://10.16.100.42/repository/github-proxy",
+              "mapboxMirrorURL": "http://10.16.100.42/repository/mapbox-proxy"
+            },
+            "createdAt": "2026-10-22T11:52:46.575Z",
+            "tag": "v3",
+            "sourceAvailable": true
+          },
+          {
+            "_id": "6ad9f588c588f1bc8f9314a4",
+            "type": "DEPLOY",
+            "imageName": "registry.c1.liara.ir/apps/6ad9f499743f4acf4fac27e6:y9q2ewidr04h",
+            "projectType": "node",
+            "state": "READY",
+            "port": 3000,
+            "buildArgs": {
+              "__NODE_MIRROR": "true",
+              "__NODE_MIRRORURL": "http://10.16.100.42/repository/npm-proxy",
+              "__NODE_GITHUBMIRRORURL": "http://10.16.100.42/repository/github-proxy",
+              "__NODE_MAPBOXMIRRORURL": "http://10.16.100.42/repository/mapbox-proxy"
+            },
+            "buildLocation": "iran",
+            "buildTimeout": 5,
+            "message": "negahban d00826f3e5175d8c",
+            "gitInfo": {
+              "branch": null,
+              "message": null,
+              "commit": null,
+              "committedAt": null,
+              "remote": null,
+              "author": {
+                "email": null,
+                "name": null
+              },
+              "tags": []
+            },
+            "client": "@liara/cli/9.6.0 linux-x64 node-v26.7.0",
+            "disks": [],
+            "finishedAt": "2026-10-22T11:38:08.640Z",
+            "platformConfig": {
+              "version": "22",
+              "mirror": true,
+              "mirrorURL": "http://10.16.100.42/repository/npm-proxy",
+              "githubMirrorURL": "http://10.16.100.42/repository/github-proxy",
+              "mapboxMirrorURL": "http://10.16.100.42/repository/mapbox-proxy"
+            },
+            "createdAt": "2026-10-22T11:37:44.045Z",
+            "tag": "v2",
+            "sourceAvailable": true
+          },
+          {
+            "_id": "6ad9f4a0ec28f72532290cf7",
+            "type": "DEPLOY",
+            "imageName": "registry.c1.liara.ir/apps/6ad9f499743f4acf4fac27e6:kj6o1e86nl53",
+            "projectType": "node",
+            "state": "READY",
+            "port": 3000,
+            "buildArgs": {
+              "__NODE_MIRROR": "true",
+              "__NODE_MIRRORURL": "http://10.16.100.42/repository/npm-proxy",
+              "__NODE_GITHUBMIRRORURL": "http://10.16.100.42/repository/github-proxy",
+              "__NODE_MAPBOXMIRRORURL": "http://10.16.100.42/repository/mapbox-proxy"
+            },
+            "buildLocation": "iran",
+            "buildTimeout": 5,
+            "message": "negahban d00826f3e5175d8c",
+            "gitInfo": {
+              "branch": null,
+              "message": null,
+              "commit": null,
+              "committedAt": null,
+              "remote": null,
+              "author": {
+                "email": null,
+                "name": null
+              },
+              "tags": []
+            },
+            "client": "@liara/cli/9.6.0 linux-x64 node-v26.7.0",
+            "disks": [],
+            "finishedAt": "2026-10-22T11:34:13.161Z",
+            "platformConfig": {
+              "version": "22",
+              "mirror": true,
+              "mirrorURL": "http://10.16.100.42/repository/npm-proxy",
+              "githubMirrorURL": "http://10.16.100.42/repository/github-proxy",
+              "mapboxMirrorURL": "http://10.16.100.42/repository/mapbox-proxy"
+            },
+            "createdAt": "2026-10-22T11:33:52.085Z",
+            "tag": "v1",
+            "sourceAvailable": true
+          }
+        ],
+        "platform": "node"
+      }
+    },
+    {
+      "id": "ev_b72b36cffabf39a4",
+      "kind": "cpu",
+      "title": "مصرف CPU",
+      "observedAt": "2026-10-22T12:04:41.754Z",
+      "available": true,
+      "data": {
+        "end": 1792670681,
+        "result": [
+          {
+            "values": [
+              [
+                1792669781,
+                "0.000014229272061931984"
+              ],
+              [
+                1792669811,
+                "0.000016258315524915714"
+              ],
+              [
+                1792669841,
+                "0.00008652570093802559"
+              ],
+              [
+                1792669871,
+                "0.00008613097763525188"
+              ],
+              [
+                1792669901,
+                "0.00008222119957048644"
+              ],
+              [
+                1792669931,
+                "0.00010572855776384305"
+              ],
+              [
+                1792669961,
+                "0.00011076552774591488"
+              ],
+              [
+                1792669991,
+                "0.00010892891483409098"
+              ],
+              [
+                1792670021,
+                "0.00017223213648368931"
+              ]
+            ],
+            "applet": "6ad9f499743f4acf4fac27e6.1.174391cb-024c-40d7-becb-59171e58df9e-DEPLOY"
+          },
+          {
+            "values": [
+              [
+                1792670051,
+                "0.00909289339728871"
+              ],
+              [
+                1792670081,
+                "0.00785983"
+              ],
+              [
+                1792670111,
+                "0.006934180635917793"
+              ],
+              [
+                1792670141,
+                "0.0062437185824615275"
+              ],
+              [
+                1792670171,
+                "0.006802337927532564"
+              ],
+              [
+                1792670201,
+                "0.00641285958767834"
+              ],
+              [
+                1792670231,
+                "0.006410069094911721"
+              ],
+              [
+                1792670261,
+                "0.006112099562160106"
+              ],
+              [
+                1792670291,
+                "0.0063342695617730725"
+              ],
+              [
+                1792670321,
+                "0.0009161927245412599"
+              ],
+              [
+                1792670351,
+                "0.000185102866586881"
+              ],
+              [
+                1792670381,
+                "0.00018183897083748305"
+              ],
+              [
+                1792670411,
+                "0.0001895116095835928"
+              ],
+              [
+                1792670441,
+                "0.00018276773671432398"
+              ],
+              [
+                1792670471,
+                "0.00012236669466063988"
+              ],
+              [
+                1792670501,
+                "0.000014234295512193227"
+              ],
+              [
+                1792670531,
+                "0.000013277928316979038"
+              ],
+              [
+                1792670561,
+                "0.00009877340467651457"
+              ],
+              [
+                1792670591,
+                "0.00009809202974122752"
+              ],
+              [
+                1792670621,
+                "0.00009235667660626193"
+              ],
+              [
+                1792670651,
+                "0.00009226736566186212"
+              ],
+              [
+                1792670681,
+                "0.00009653327549434285"
+              ]
+            ],
+            "applet": "6ad9f499743f4acf4fac27e6.1.35eca5b1-7358-43b2-9cdd-29ee3cd9913d-DEPLOY"
+          }
+        ]
+      },
+      "limitation": "سری خام لیارا؛ واحد و تازگی باید با قرارداد ارائه‌دهنده تطبیق داده شوند. دادهٔ خالی معادل صفر نیست."
+    },
+    {
+      "id": "ev_7c9e8e4a79ffa36e",
+      "kind": "memory",
+      "title": "مصرف حافظه",
+      "observedAt": "2026-10-22T12:04:41.756Z",
+      "available": true,
+      "data": {
+        "end": 1792670681,
+        "result": [
+          {
+            "values": [
+              [
+                1792669781,
+                "27521024"
+              ],
+              [
+                1792669811,
+                "27525120"
+              ],
+              [
+                1792669841,
+                "27942912"
+              ],
+              [
+                1792669871,
+                "27942912"
+              ],
+              [
+                1792669901,
+                "27942912"
+              ],
+              [
+                1792669931,
+                "28004352"
+              ],
+              [
+                1792669961,
+                "28004352"
+              ],
+              [
+                1792669991,
+                "28004352"
+              ],
+              [
+                1792670021,
+                "28319744"
+              ],
+              [
+                1792670051,
+                "28319744"
+              ],
+              [
+                1792670081,
+                "28319744"
+              ],
+              [
+                1792670111,
+                "28319744"
+              ],
+              [
+                1792670141,
+                "28319744"
+              ],
+              [
+                1792670171,
+                "28319744"
+              ],
+              [
+                1792670201,
+                "28319744"
+              ],
+              [
+                1792670231,
+                "28319744"
+              ],
+              [
+                1792670261,
+                "28319744"
+              ],
+              [
+                1792670291,
+                "28319744"
+              ]
+            ],
+            "applet": "6ad9f499743f4acf4fac27e6.1.174391cb-024c-40d7-becb-59171e58df9e-DEPLOY"
+          },
+          {
+            "values": [
+              [
+                1792670021,
+                "3162112"
+              ],
+              [
+                1792670051,
+                "42090496"
+              ],
+              [
+                1792670081,
+                "42131456"
+              ],
+              [
+                1792670111,
+                "42131456"
+              ],
+              [
+                1792670141,
+                "42131456"
+              ],
+              [
+                1792670171,
+                "42131456"
+              ],
+              [
+                1792670201,
+                "42618880"
+              ],
+              [
+                1792670231,
+                "42663936"
+              ],
+              [
+                1792670261,
+                "42663936"
+              ],
+              [
+                1792670291,
+                "42663936"
+              ],
+              [
+                1792670321,
+                "42663936"
+              ],
+              [
+                1792670351,
+                "42668032"
+              ],
+              [
+                1792670381,
+                "42668032"
+              ],
+              [
+                1792670411,
+                "42668032"
+              ],
+              [
+                1792670441,
+                "42668032"
+              ],
+              [
+                1792670471,
+                "42668032"
+              ],
+              [
+                1792670501,
+                "42668032"
+              ],
+              [
+                1792670531,
+                "42668032"
+              ],
+              [
+                1792670561,
+                "42844160"
+              ],
+              [
+                1792670591,
+                "42844160"
+              ],
+              [
+                1792670621,
+                "42844160"
+              ],
+              [
+                1792670651,
+                "42844160"
+              ],
+              [
+                1792670681,
+                "42844160"
+              ]
+            ],
+            "applet": "6ad9f499743f4acf4fac27e6.1.35eca5b1-7358-43b2-9cdd-29ee3cd9913d-DEPLOY"
+          }
+        ]
+      },
+      "limitation": "سری خام لیارا؛ واحد و تازگی باید با قرارداد ارائه‌دهنده تطبیق داده شوند. دادهٔ خالی معادل صفر نیست."
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "knownLocalSecretValuesChecked": true,
+  "archives": [
+    {
+      "file": "negahban-source.zip",
+      "bytes": 271907,
+      "sha256": "39f8b5294f773073c593745bea93e5c336fcbfd41fc49bd08ecb15e9befee7af",
+      "entries": 48
+    },
+    {
+      "file": "negahban-submission.zip",
+      "bytes": 6186690,
+      "sha256": "4a4b656ea1b8a6211b66066a10d671223e8cc17016ecf9c98ed4fdbe3dcfd0c9",
+      "entries": 61
+    }
+  ]
+}

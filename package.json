@@ -1,0 +1,42 @@
+{
+  "name": "liara-sre-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.16"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --import tsx src/server.ts",
+    "access": "node --env-file-if-exists=.env --import tsx scripts/access.ts",
+    "build": "tsc --noEmit && vite build",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "mcp": "node --env-file-if-exists=.env --import tsx src/mcp.ts",
+    "spike": "node --env-file-if-exists=.env --import tsx scripts/spike.ts",
+    "test:browser": "node --import tsx scripts/browser-check.ts",
+    "test:mcp": "node --import tsx scripts/mcp-check.ts"
+  },
+  "dependencies": {
+    "@fastify/static": "^9.0.0",
+    "@liara/cli": "9.6.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@openai/codex-sdk": "0.163.0",
+    "diff": "^8.0.2",
+    "fastify": "5.12.7",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.0",
+    "playwright": "1.64.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.0"
+  }
+}

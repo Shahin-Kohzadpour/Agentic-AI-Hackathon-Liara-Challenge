@@ -1,0 +1,1209 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-22T12:02:23.699Z",
+  "project": {
+    "id": "liara",
+    "name": "negahban-demo-4d0934",
+    "mode": "liara",
+    "currentSnapshot": "src_fe981e49ee49caf1",
+    "revision": 3,
+    "remoteRelease": "6ad9f90e743f4acf4fad6877"
+  },
+  "incident": {
+    "id": "inc_c918d3479d8df540",
+    "projectId": "liara",
+    "request": "در برنامهٔ زنده، سفارش بدون تخفیف خطای ۵۰۰ دارد؛ علت را با لاگ و کد بررسی کن و اصلاح آزموده‌شده را برای تأیید آماده کن.",
+    "status": "resolved",
+    "createdAt": "2026-10-22T11:40:03.782Z",
+    "updatedAt": "2026-10-22T12:02:22.897Z",
+    "evidence": [
+      {
+        "id": "ev_5c60eff10586662b",
+        "kind": "status",
+        "title": "وضعیت برنامه",
+        "observedAt": "2026-10-22T11:40:04.951Z",
+        "available": true,
+        "data": {
+          "project": {
+            "_id": "6ad9f499743f4acf4fac27e6",
+            "project_id": "negahban-demo-4d0934",
+            "type": "node",
+            "status": "ACTIVE",
+            "readOnlyRootFilesystem": true,
+            "defaultSubdomain": true,
+            "defaultSubdomainExpired": false,
+            "keepDefaultSubdomain": false,
+            "zeroDowntime": false,
+            "scale": 1,
+            "planID": "small-g2",
+            "bundlePlanID": "basic",
+            "network": {
+              "_id": "6ad9f498ec28f72532290b0b",
+              "name": "negahban-demo-4d0934"
+            },
+            "dns": [],
+            "created_at": "2026-10-22T11:33:45.487Z",
+            "hourlyPrice": 659.72,
+            "bundleHourlyPrice": 381.94,
+            "isDeployed": true,
+            "reservedDiskSpace": 0
+          }
+        }
+      },
+      {
+        "id": "ev_a7516efb4fc765ba",
+        "kind": "legacy-logs",
+        "title": "پاسخ قدیمی API؛ لاگ برنامه نیست",
+        "observedAt": "2026-10-22T11:40:04.954Z",
+        "available": false,
+        "data": [
+          {
+            "type": "stdout",
+            "datetime": "2026-10-22T11:40:05.033Z",
+            "message": "Please upgrade your client using: `npm install -g @liara/cli`"
+          }
+        ],
+        "limitation": "پس از تولید تشخیص، endpoint فعلی مطابق CLI کشف و لاگ واقعی جداگانه ثبت شد."
+      },
+      {
+        "id": "ev_9277f720a7a66425",
+        "kind": "events",
+        "title": "رویدادهای لیارا",
+        "observedAt": "2026-10-22T11:40:04.957Z",
+        "available": true,
+        "data": {
+          "data": [
+            {
+              "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+              "status": "die",
+              "action": "die",
+              "time": "1792669121",
+              "release": "6ad9f4a0ec28f72532290cf7",
+              "tag": "v1"
+            },
+            {
+              "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+              "status": "stop",
+              "action": "stop",
+              "time": "1792669121",
+              "release": "6ad9f4a0ec28f72532290cf7",
+              "tag": "v1"
+            },
+            {
+              "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+              "status": "kill",
+              "action": "kill",
+              "time": "1792669121",
+              "release": "6ad9f4a0ec28f72532290cf7",
+              "tag": "v1"
+            },
+            {
+              "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+              "status": "start",
+              "action": "start",
+              "time": "1792669107",
+              "release": "6ad9f588c588f1bc8f9314a4",
+              "tag": "v2"
+            },
+            {
+              "id": "d992034b754dc074da1e83b67e824f1766d4920e1c7010c31268a9e48068b1be",
+              "status": "create",
+              "action": "create",
+              "time": "1792669106",
+              "release": "6ad9f588c588f1bc8f9314a4",
+              "tag": "v2"
+            },
+            {
+              "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+              "status": "start",
+              "action": "start",
+              "time": "1792668902",
+              "release": "6ad9f4a0ec28f72532290cf7",
+              "tag": "v1"
+            },
+            {
+              "id": "d180cb23f679abb536fad8979e2bfba548db2271ad01210d5dca32ec86b43a85",
+              "status": "create",
+              "action": "create",
+              "time": "1792668900",
+              "release": "6ad9f4a0ec28f72532290cf7",
+              "tag": "v1"
+            }
+          ]
+        }
+      },
+      {
+        "id": "ev_fe8810049a6c7fe1",
+        "kind": "releases",
+        "title": "نسخه‌های منتشرشده",
+        "observedAt": "2026-10-22T11:40:04.959Z",
+        "available": true,
+        "data": {
+          "total": 2,
+          "currentRelease": "6ad9f588c588f1bc8f9314a4",
+          "readyReleasesCount": 2,
+          "releases": [
+            {
+              "_id": "6ad9f588c588f1bc8f9314a4",
+              "type": "DEPLOY",
+              "imageName": "registry.c1.liara.ir/apps/6ad9f499743f4acf4fac27e6:y9q2ewidr04h",
+              "projectType": "node",
+              "state": "READY",
+              "port": 3000,
+              "buildArgs": {
+                "__NODE_MIRROR": "true",
+                "__NODE_MIRRORURL": "http://10.16.100.42/repository/npm-proxy",
+                "__NODE_GITHUBMIRRORURL": "http://10.16.100.42/repository/github-proxy",
+                "__NODE_MAPBOXMIRRORURL": "http://10.16.100.42/repository/mapbox-proxy"
+              },
+              "buildLocation": "iran",
+              "buildTimeout": 5,
+              "message": "negahban d00826f3e5175d8c",
+              "gitInfo": {
+                "branch": null,
+                "message": null,
+                "commit": null,
+                "committedAt": null,
+                "remote": null,
+                "author": {
+                  "email": null,
+                  "name": null
+                },
+                "tags": []
+              },
+              "client": "@liara/cli/9.6.0 linux-x64 node-v26.7.0",
+              "disks": [],
+              "finishedAt": "2026-10-22T11:38:08.640Z",
+              "platformConfig": {
+                "version": "22",
+                "mirror": true,
+                "mirrorURL": "http://10.16.100.42/repository/npm-proxy",
+                "githubMirrorURL": "http://10.16.100.42/repository/github-proxy",
+                "mapboxMirrorURL": "http://10.16.100.42/repository/mapbox-proxy"
+              },
+              "createdAt": "2026-10-22T11:37:44.045Z",
+              "tag": "v2",
+              "sourceAvailable": true
+            },
+            {
+              "_id": "6ad9f4a0ec28f72532290cf7",
+              "type": "DEPLOY",
+              "imageName": "registry.c1.liara.ir/apps/6ad9f499743f4acf4fac27e6:kj6o1e86nl53",
+              "projectType": "node",
+              "state": "READY",
+              "port": 3000,
+              "buildArgs": {
+                "__NODE_MIRROR": "true",
+                "__NODE_MIRRORURL": "http://10.16.100.42/repository/npm-proxy",
+                "__NODE_GITHUBMIRRORURL": "http://10.16.100.42/repository/github-proxy",
+                "__NODE_MAPBOXMIRRORURL": "http://10.16.100.42/repository/mapbox-proxy"
+              },
+              "buildLocation": "iran",
+              "buildTimeout": 5,
+              "message": "negahban d00826f3e5175d8c",
+              "gitInfo": {
+                "branch": null,
+                "message": null,
+                "commit": null,
+                "committedAt": null,
+                "remote": null,
+                "author": {
+                  "email": null,
+                  "name": null
+                },
+                "tags": []
+              },
+              "client": "@liara/cli/9.6.0 linux-x64 node-v26.7.0",
+              "disks": [],
+              "finishedAt": "2026-10-22T11:34:13.161Z",
+              "platformConfig": {
+                "version": "22",
+                "mirror": true,
+                "mirrorURL": "http://10.16.100.42/repository/npm-proxy",
+                "githubMirrorURL": "http://10.16.100.42/repository/github-proxy",
+                "mapboxMirrorURL": "http://10.16.100.42/repository/mapbox-proxy"
+              },
+              "createdAt": "2026-10-22T11:33:52.085Z",
+              "tag": "v1",
+              "sourceAvailable": true
+            }
+          ],
+          "platform": "node"
+        }
+      },
+      {
+        "id": "ev_95e3e2f445584d07",
+        "kind": "http",
+        "title": "درخواست‌های واقعی به برنامهٔ منتشرشده",
+        "observedAt": "2026-10-22T11:40:06.473Z",
+        "available": true,
+        "data": {
+          "passed": false,
+          "checks": [
+            {
+              "name": "درخواست اصلی بدون تخفیف",
+              "passed": false,
+              "expected": {
+                "status": 200,
+                "body": {
+                  "subtotal": 200,
+                  "discount": 0,
+                  "total": 200
+                }
+              },
+              "actual": {
+                "status": 500,
+                "body": {
+                  "error": "INTERNAL_ERROR"
+                }
+              }
+            },
+            {
+              "name": "تخفیف معتبر",
+              "passed": true,
+              "expected": {
+                "status": 200,
+                "body": {
+                  "subtotal": 200,
+                  "discount": 10,
+                  "total": 190
+                }
+              },
+              "actual": {
+                "status": 200,
+                "body": {
+                  "subtotal": 200,
+                  "discount": 10,
+                  "total": 190
+                }
+              }
+            },
+            {
+              "name": "قرارداد ورودی نامعتبر",
+              "passed": true,
+              "expected": {
+                "status": 400,
+                "body": {
+                  "error": "INVALID_DISCOUNTS"
+                }
+              },
+              "actual": {
+                "status": 400,
+                "body": {
+                  "error": "INVALID_DISCOUNTS"
+                }
+              }
+            }
+          ],
+          "durationMs": 490,
+          "source": "http"
+        }
+      },
+      {
+        "id": "ev_69cae783f4a6716b",
+        "kind": "logs",
+        "title": "لاگ‌های برنامه",
+        "observedAt": "2026-10-22T11:50:02.675Z",
+        "available": true,
+        "data": {
+          "endpoint": "v2",
+          "releaseId": "6ad9f588c588f1bc8f9314a4",
+          "lines": [
+            {
+              "timestamp": "1792669107829872183",
+              "releaseId": "6ad9f588c588f1bc8f9314a4",
+              "stream": "stdout",
+              "message": ""
+            },
+            {
+              "timestamp": "1792669107830017987",
+              "releaseId": "6ad9f588c588f1bc8f9314a4",
+              "stream": "stdout",
+              "message": "> negahban-demo-shop@1.0.0 start"
+            },
+            {
+              "timestamp": "1792669107830079339",
+              "releaseId": "6ad9f588c588f1bc8f9314a4",
+              "stream": "stdout",
+              "message": "> node server.mjs"
+            },
+            {
+              "timestamp": "1792669107830125459",
+              "releaseId": "6ad9f588c588f1bc8f9314a4",
+              "stream": "stdout",
+              "message": ""
+            },
+            {
+              "timestamp": "1792669206299282537",
+              "releaseId": "6ad9f588c588f1bc8f9314a4",
+              "stream": "stderr",
+              "message": {
+                "event": "order_summary_failed",
+                "message": "Cannot read properties of undefined (reading 'reduce')",
+                "stack": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at Server.<anonymous> (file:///app/server.mjs:11:20)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "ev_706bcca45dd36065",
+        "kind": "cpu",
+        "title": "مصرف CPU",
+        "observedAt": "2026-10-22T11:50:02.681Z",
+        "available": true,
+        "data": {
+          "end": 1792669802,
+          "result": [
+            {
+              "values": [
+                [
+                  1792669142,
+                  "0.005019883778852969"
+                ],
+                [
+                  1792669172,
+                  "0.005849521110779059"
+                ],
+                [
+                  1792669202,
+                  "0.004237023538662092"
+                ],
+                [
+                  1792669232,
+                  "0.004239090345830755"
+                ],
+                [
+                  1792669262,
+                  "0.0044764275"
+                ],
+                [
+                  1792669292,
+                  "0.004379686666666665"
+                ],
+                [
+                  1792669322,
+                  "0.004223912417787294"
+                ],
+                [
+                  1792669352,
+                  "0.004171216625620848"
+                ],
+                [
+                  1792669382,
+                  "0.00438518754779787"
+                ],
+                [
+                  1792669412,
+                  "0.00021892709746364913"
+                ],
+                [
+                  1792669442,
+                  "0.00022128613272582088"
+                ],
+                [
+                  1792669472,
+                  "0.00021085372146780485"
+                ],
+                [
+                  1792669502,
+                  "0.000018769413299238142"
+                ],
+                [
+                  1792669532,
+                  "0.000013897212010586757"
+                ],
+                [
+                  1792669562,
+                  "0.00001431977645845138"
+                ],
+                [
+                  1792669592,
+                  "0.000013407213710556795"
+                ],
+                [
+                  1792669622,
+                  "0.000014165923282783334"
+                ],
+                [
+                  1792669652,
+                  "0.000014614826394781019"
+                ],
+                [
+                  1792669682,
+                  "0.000014192789575220809"
+                ],
+                [
+                  1792669712,
+                  "0.000013687801334596092"
+                ],
+                [
+                  1792669742,
+                  "0.000014097887492475659"
+                ],
+                [
+                  1792669772,
+                  "0.000014229272061931984"
+                ],
+                [
+                  1792669802,
+                  "0.00001548767838352943"
+                ]
+              ],
+              "applet": "6ad9f499743f4acf4fac27e6.1.174391cb-024c-40d7-becb-59171e58df9e-DEPLOY"
+            },
+            {
+              "values": [
+                [
+                  1792668932,
+                  "0.005936209549168092"
+                ],
+                [
+                  1792668962,
+                  "0.005576091987284183"
+                ],
+                [
+                  1792668992,
+                  "0.005299538834537744"
+                ],
+                [
+                  1792669022,
+                  "0.004728354027868566"
+                ],
+                [
+                  1792669052,
+                  "0.004547365916434339"
+                ],
+                [
+                  1792669082,
+                  "0.004545977777777778"
+                ],
+                [
+                  1792669112,
+                  "0.004631926129475283"
+                ]
+              ],
+              "applet": "6ad9f499743f4acf4fac27e6.1.f87219ca-1f4a-44f7-8531-23cb563a0a00-DEPLOY"
+            }
+          ]
+        },
+        "limitation": "سری خام لیارا؛ واحد و تازگی باید با قرارداد ارائه‌دهنده تطبیق داده شوند. دادهٔ خالی معادل صفر نیست."
+      },
+      {
+        "id": "ev_5a48cfb9285712db",
+        "kind": "memory",
+        "title": "مصرف حافظه",
+        "observedAt": "2026-10-22T11:50:02.683Z",
+        "available": true,
+        "data": {
+          "end": 1792669802,
+          "result": [
+            {
+              "values": [
+                [
+                  1792669112,
+                  "1253376"
+                ],
+                [
+                  1792669142,
+                  "27107328"
+                ],
+                [
+                  1792669172,
+                  "27107328"
+                ],
+                [
+                  1792669202,
+                  "27107328"
+                ],
+                [
+                  1792669232,
+                  "27500544"
+                ],
+                [
+                  1792669262,
+                  "27500544"
+                ],
+                [
+                  1792669292,
+                  "27508736"
+                ],
+                [
+                  1792669322,
+                  "27516928"
+                ],
+                [
+                  1792669352,
+                  "27516928"
+                ],
+                [
+                  1792669382,
+                  "27516928"
+                ],
+                [
+                  1792669412,
+                  "27516928"
+                ],
+                [
+                  1792669442,
+                  "27516928"
+                ],
+                [
+                  1792669472,
+                  "27521024"
+                ],
+                [
+                  1792669502,
+                  "27521024"
+                ],
+                [
+                  1792669532,
+                  "27521024"
+                ],
+                [
+                  1792669562,
+                  "27521024"
+                ],
+                [
+                  1792669592,
+                  "27521024"
+                ],
+                [
+                  1792669622,
+                  "27521024"
+                ],
+                [
+                  1792669652,
+                  "27521024"
+                ],
+                [
+                  1792669682,
+                  "27521024"
+                ],
+                [
+                  1792669712,
+                  "27521024"
+                ],
+                [
+                  1792669742,
+                  "27521024"
+                ],
+                [
+                  1792669772,
+                  "27521024"
+                ],
+                [
+                  1792669802,
+                  "27525120"
+                ]
+              ],
+              "applet": "6ad9f499743f4acf4fac27e6.1.174391cb-024c-40d7-becb-59171e58df9e-DEPLOY"
+            },
+            {
+              "values": [
+                [
+                  1792668932,
+                  "35360768"
+                ],
+                [
+                  1792668962,
+                  "35360768"
+                ],
+                [
+                  1792668992,
+                  "35360768"
+                ],
+                [
+                  1792669022,
+                  "35360768"
+                ],
+                [
+                  1792669052,
+                  "35360768"
+                ],
+                [
+                  1792669082,
+                  "35360768"
+                ],
+                [
+                  1792669112,
+                  "35774464"
+                ],
+                [
+                  1792669142,
+                  "35774464"
+                ],
+                [
+                  1792669172,
+                  "35774464"
+                ],
+                [
+                  1792669202,
+                  "35774464"
+                ],
+                [
+                  1792669232,
+                  "35774464"
+                ],
+                [
+                  1792669262,
+                  "35774464"
+                ],
+                [
+                  1792669292,
+                  "35774464"
+                ],
+                [
+                  1792669322,
+                  "35774464"
+                ],
+                [
+                  1792669352,
+                  "35774464"
+                ],
+                [
+                  1792669382,
+                  "35774464"
+                ]
+              ],
+              "applet": "6ad9f499743f4acf4fac27e6.1.f87219ca-1f4a-44f7-8531-23cb563a0a00-DEPLOY"
+            }
+          ]
+        },
+        "limitation": "سری خام لیارا؛ واحد و تازگی باید با قرارداد ارائه‌دهنده تطبیق داده شوند. دادهٔ خالی معادل صفر نیست."
+      }
+    ],
+    "baseline": {
+      "passed": false,
+      "checks": [
+        {
+          "name": "بدون فیلد اختیاری تخفیف",
+          "passed": false,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 500,
+            "body": {
+              "error": "INTERNAL_ERROR"
+            },
+            "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at invoke (file:///runner/verify.mjs:3:33)\n    at file:///runner/verify.mjs:13:63\n    at Array.map (<anonymous>)\n    at file:///runner/verify.mjs:13:20\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+          }
+        },
+        {
+          "name": "تخفیف خالی",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف معتبر",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          }
+        },
+        {
+          "name": "ورودی تخفیف نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        },
+        {
+          "name": "آیتم نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: دو آیتم",
+          "passed": false,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 187,
+              "discount": 0,
+              "total": 187
+            }
+          },
+          "actual": {
+            "status": 500,
+            "body": {
+              "error": "INTERNAL_ERROR"
+            },
+            "exception": "TypeError: Cannot read properties of undefined (reading 'reduce')\n    at summarizeOrder (file:///app/summary.mjs:10:36)\n    at invoke (file:///runner/verify.mjs:3:33)\n    at file:///runner/verify.mjs:13:63\n    at Array.map (<anonymous>)\n    at file:///runner/verify.mjs:13:20\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\n    at async node:internal/modules/esm/loader:650:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        }
+      ],
+      "durationMs": 374,
+      "source": "isolated-contract-tests"
+    },
+    "diagnosis": "در نبود discounts، فراخوانی reduce روی undefined باعث TypeError و پاسخ ۵۰۰ می‌شود؛ خطای baseline این علت را تأیید می‌کند. همچنین اعضای null یا undefined در items می‌توانند اعتبارسنجی را با استثنا متوقف کنند.",
+    "change": "برای discounts حذف‌شده، آرایهٔ خالی در نظر گرفته شد و بررسی اعضای تهی به اعتبارسنجی items اضافه شد. قرارداد پاسخ و محدودیت‌های اعتبارسنجی حفظ شده‌اند. آزمون یا استقرار انجام نشده است.",
+    "threadId": "01a16369-70bf-7f32-9131-b3fd3608884d",
+    "diff": "Index: summary.mjs\n===================================================================\n--- summary.mjs\tنسخهٔ فعلی\n+++ summary.mjs\tاصلاح پیشنهادی\n@@ -1,12 +1,13 @@\n export function summarizeOrder(order) {\n   if (!order || !Array.isArray(order.items) || order.items.length === 0 ||\n-      order.items.some(item => !Number.isInteger(item.price) || item.price < 0 || !Number.isInteger(item.quantity) || item.quantity < 1)) {\n+      order.items.some(item => item == null || !Number.isInteger(item.price) || item.price < 0 || !Number.isInteger(item.quantity) || item.quantity < 1)) {\n     return { status: 400, body: { error: 'INVALID_ITEMS' } };\n   }\n   if (order.discounts !== undefined && (!Array.isArray(order.discounts) || order.discounts.some(value => !Number.isInteger(value) || value < 0 || value > 50))) {\n     return { status: 400, body: { error: 'INVALID_DISCOUNTS' } };\n   }\n   const subtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);\n-  const discount = order.discounts.reduce((sum, value) => sum + value, 0);\n+  const discounts = order.discounts === undefined ? [] : order.discounts;\n+  const discount = discounts.reduce((sum, value) => sum + value, 0);\n   return { status: 200, body: { subtotal, discount, total: Math.max(0, subtotal - discount) } };\n }\n",
+    "candidate": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "بدون فیلد اختیاری تخفیف",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف خالی",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف معتبر",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 30,
+              "total": 170
+            }
+          }
+        },
+        {
+          "name": "ورودی تخفیف نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        },
+        {
+          "name": "آیتم نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_ITEMS"
+            }
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: دو آیتم",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 187,
+              "discount": 0,
+              "total": 187
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 187,
+              "discount": 0,
+              "total": 187
+            }
+          }
+        },
+        {
+          "name": "حالت نگه‌داشته‌شده: تخفیف منفی",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        }
+      ],
+      "durationMs": 110,
+      "source": "isolated-contract-tests"
+    },
+    "actionId": "act_a98c3d6852e9055a",
+    "releaseId": "6ad9f90e743f4acf4fad6877",
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "درخواست اصلی بدون تخفیف",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 0,
+              "total": 200
+            }
+          }
+        },
+        {
+          "name": "تخفیف معتبر",
+          "passed": true,
+          "expected": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 10,
+              "total": 190
+            }
+          },
+          "actual": {
+            "status": 200,
+            "body": {
+              "subtotal": 200,
+              "discount": 10,
+              "total": 190
+            }
+          }
+        },
+        {
+          "name": "قرارداد ورودی نامعتبر",
+          "passed": true,
+          "expected": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          },
+          "actual": {
+            "status": 400,
+            "body": {
+              "error": "INVALID_DISCOUNTS"
+            }
+          }
+        }
+      ],
+      "durationMs": 3419,
+      "source": "http"
+    }
+  },
+  "action": {
+    "id": "act_a98c3d6852e9055a",
+    "runId": "inc_c918d3479d8df540",
+    "projectId": "liara",
+    "kind": "deploy",
+    "status": "succeeded",
+    "createdAt": "2026-10-22T11:40:43.449Z",
+    "expiresAt": "2026-10-22T12:10:43.449Z",
+    "baseRevision": 2,
+    "baseSnapshot": "src_03b96e055bd19965",
+    "baseRelease": "6ad9f588c588f1bc8f9314a4",
+    "snapshotId": "src_fe981e49ee49caf1",
+    "digest": "ca11cf806dcf6a86bc9b8033a40adfa7569860ef5ce2cb9d4453b44c266405d6",
+    "title": "انتشار اصلاح آزموده‌شده",
+    "summary": "لیارا · negahban-demo-4d0934 · منبع ca11cf806dcf",
+    "risk": "این عملیات سرویس واقعی را تغییر می‌دهد و ممکن است وقفه داشته باشد. منبع سالم قبلی برای پیشنهاد بازگشت نگهداری می‌شود.",
+    "cost": "پلن در این عملیات تغییر نمی‌کند؛ هزینهٔ سرویس فعلی لیارا ادامه دارد.",
+    "approvedAt": "2026-10-22T11:52:28.941Z",
+    "executedAt": "2026-10-22T11:52:29.883Z",
+    "result": {
+      "output": "App: negahban-demo-4d0934\nPath: /home/arash/Projects/liara-sre-agent/.data/snapshots/src_fe981e49ee49caf1\nPlatform: node\nPort: 3000\nnode version: 22\nCompressed size: 1.13KB (use .gitignore to reduce the size)\nDeployment created successfully.\n",
+      "releaseId": "6ad9f90e743f4acf4fad6877",
+      "verification": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "درخواست اصلی بدون تخفیف",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 0,
+                "total": 200
+              }
+            }
+          },
+          {
+            "name": "تخفیف معتبر",
+            "passed": true,
+            "expected": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 10,
+                "total": 190
+              }
+            },
+            "actual": {
+              "status": 200,
+              "body": {
+                "subtotal": 200,
+                "discount": 10,
+                "total": 190
+              }
+            }
+          },
+          {
+            "name": "قرارداد ورودی نامعتبر",
+            "passed": true,
+            "expected": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_DISCOUNTS"
+              }
+            },
+            "actual": {
+              "status": 400,
+              "body": {
+                "error": "INVALID_DISCOUNTS"
+              }
+            }
+          }
+        ],
+        "durationMs": 3419,
+        "source": "http"
+      },
+      "recheckedAt": "2026-10-22T12:02:22.552Z"
+    }
+  },
+  "events": [
+    {
+      "id": 12,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:40:04.128Z",
+      "status": "collecting",
+      "message": "شواهد برنامه، نسخه و درخواست مسئله‌دار جمع‌آوری می‌شوند."
+    },
+    {
+      "id": 13,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:40:09.583Z",
+      "status": "patching",
+      "message": "خطا در محیط جدا بازتولید شد. Codex اصلاح محدود را آماده می‌کند."
+    },
+    {
+      "id": 14,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:40:09.986Z",
+      "status": "patching",
+      "message": "درخواست اصلاح محدود به Codex ارسال شد؛ عامل اختیار انتشار ندارد."
+    },
+    {
+      "id": 15,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:40:43.241Z",
+      "status": "testing",
+      "message": "اصلاح پیشنهادی با آزمون‌های مستقل و موارد نگه‌داشته‌شده بررسی می‌شود."
+    },
+    {
+      "id": 16,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:40:44.629Z",
+      "status": "awaiting_approval",
+      "message": "اصلاح آزموده‌شده آماده است. انتشار تنها پس از تأیید انسانی انجام می‌شود."
+    },
+    {
+      "id": 17,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:50:06.143Z",
+      "status": "evidence_refreshed",
+      "message": "لاگ واقعی نسخهٔ فعلی و دادهٔ منابع، پس از تشخیص محلی و پیش از انتشار برای تطبیق شواهد ثبت شدند."
+    },
+    {
+      "id": 18,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:52:30.605Z",
+      "status": "deploying",
+      "message": "منبع تأییدشده از مسیر کنترل‌شده منتشر می‌شود."
+    },
+    {
+      "id": 19,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:53:07.128Z",
+      "status": "verifying",
+      "message": "درخواست کاربردی و قرارداد پاسخ روی نسخهٔ منتشرشده دوباره بررسی می‌شوند."
+    },
+    {
+      "id": 20,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:53:08.441Z",
+      "status": "failed",
+      "message": "بررسی کاربردی پس از انتشار ناموفق بود. وضعیت آمادهٔ زیرساخت به معنی موفقیت برنامه نیست."
+    },
+    {
+      "id": 21,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:56:15.237Z",
+      "status": "verifying",
+      "message": "فقط بررسی دوبارهٔ نسخهٔ موجود؛ هیچ استقرار تازه‌ای انجام نمی‌شود."
+    },
+    {
+      "id": 22,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:56:16.149Z",
+      "status": "verifying",
+      "message": "بررسی کاربردی نوبت 1؛ ثبات پاسخ پس از انتشار هنوز تأیید نشده است."
+    },
+    {
+      "id": 23,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T11:56:19.460Z",
+      "status": "resolved",
+      "message": "رفع خطا با پاسخ‌های متوالی صحیح روی همان release تأیید شد."
+    },
+    {
+      "id": 24,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T12:02:19.054Z",
+      "status": "verifying",
+      "message": "فقط بررسی دوبارهٔ نسخهٔ موجود؛ هیچ استقرار تازه‌ای انجام نمی‌شود."
+    },
+    {
+      "id": 25,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T12:02:20.331Z",
+      "status": "verifying",
+      "message": "بررسی کاربردی نوبت 1؛ ثبات پاسخ پس از انتشار هنوز تأیید نشده است."
+    },
+    {
+      "id": 26,
+      "runId": "inc_c918d3479d8df540",
+      "at": "2026-10-22T12:02:23.175Z",
+      "status": "resolved",
+      "message": "رفع خطا با پاسخ‌های متوالی صحیح روی همان release تأیید شد."
+    }
+  ]
+}
