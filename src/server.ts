@@ -18,23 +18,34 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
   const trackStream=(response:ServerResponse)=>{streams.add(response);response.once('close',()=>streams.delete(response));};
   app.addHook('preClose',async()=>{for(const response of streams)response.end();});
   const directory=options.root??root;
-  const core=options.core??new Core(directory,options.data);await core.initialize(!options.core);
+  const dataDirectory=options.data??resolve(directory,process.env.NEGAHBAN_DATA??'.data');
+  const core=options.core??new Core(directory,dataDirectory);await core.initialize(!options.core);
   const chat=new Chat(core,options.chatAgent);chat.initialize(!options.core);
   const port=options.port??Number(process.env.PORT||4317);
-  const origin=`http://127.0.0.1:${port}`;
+  let origin=`http://127.0.0.1:${port}`;
+  if(process.env.NEGAHBAN_PUBLIC_ORIGIN){
+    const publicUrl=new URL(process.env.NEGAHBAN_PUBLIC_ORIGIN);
+    if(publicUrl.protocol!=='https:'||publicUrl.username||publicUrl.password||publicUrl.pathname!=='/'||publicUrl.search||publicUrl.hash)throw new Error('NEGAHBAN_PUBLIC_ORIGIN باید یک origin عمومی HTTPS باشد.');
+    origin=publicUrl.origin;
+  }
   core.localOrigin=origin;
   const live=new LiveOperator(core,()=>core.localOrigin??origin);
   app.addHook('onClose',async()=>{await live.stop();});
   let liveStreams=0;
   const sessions=new Map<string,{csrf:string;expires:number}>();
-  const capability=async(name:string)=>{const path=join(core.data,name);try{return (await readFile(path,'utf8')).trim();}catch{const key=id('cap')+id('secret');await writeFile(path,key,{mode:0o600});return key;}};
+  const capability=async(name:string)=>{
+    const configured=name==='human-key'?process.env.NEGAHBAN_HUMAN_KEY:name==='mcp-key'?process.env.NEGAHBAN_MCP_KEY:undefined;
+    if(configured){if(configured.trim().length<32)throw new Error(`${name} باید حداقل ۳۲ نویسه داشته باشد.`);return configured.trim();}
+    const path=join(core.data,name);try{return (await readFile(path,'utf8')).trim();}catch{const key=id('cap')+id('secret');await writeFile(path,key,{mode:0o600});return key;}
+  };
   const humanKey=await capability('human-key'),toolKey=await capability('mcp-key');
   const sessionOf=(request:any)=>{const cookies=String(request.headers.cookie??'').split(';').map((s:string)=>s.trim());const value=cookies.find((s:string)=>s.startsWith('negahban='))?.slice(9);const session=value?sessions.get(value):undefined;return session&&session.expires>Date.now()?session:undefined;};
   const isTool=(request:any)=>equals(String(request.headers.authorization??''),`Bearer ${toolKey}`);
   app.addHook('onRequest',async(request,reply)=>{
-    const host=request.headers.host;
-    if(host!==`127.0.0.1:${port}`)return reply.code(403).send({error:'Host مجاز نیست؛ از نشانی 127.0.0.1 استفاده کنید.'});
+    const host=String(request.headers.host??'').toLowerCase();
+    if(host!==new URL(origin).host.toLowerCase())return reply.code(403).send({error:'Host درخواست مجاز نیست.'});
     reply.header('X-Content-Type-Options','nosniff').header('X-Frame-Options','DENY').header('Referrer-Policy','no-referrer').header('Cache-Control','no-store');
+    if(origin.startsWith('https://'))reply.header('Strict-Transport-Security','max-age=31536000; includeSubDomains');
     if(!request.url.startsWith('/demo'))reply.header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
     if(!['GET','HEAD'].includes(request.method)&&request.headers.origin!==origin&&!isTool(request))return reply.code(403).send({error:'مبدأ درخواست معتبر نیست.'});
     if(request.url.startsWith('/api/')&&!['/api/session','/api/health'].includes(request.url.split('?')[0])){
@@ -56,7 +67,7 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
     const input=z.object({key:z.string().trim().min(1).max(200)}).parse(request.body);
     if(!equals(input.key,humanKey))return reply.code(403).send({error:'کلید ورود معتبر نیست.'});
     const token=id('session'),csrf=id('csrf');sessions.set(token,{csrf,expires:Date.now()+8*3600_000});
-    reply.header('Set-Cookie',`negahban=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`);
+    reply.header('Set-Cookie',`negahban=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${origin.startsWith('https://')?'; Secure':''}`);
     return {csrf};
   });
   app.get('/api/session',async(request,reply)=>{const s=sessionOf(request);return s?{csrf:s.csrf}:reply.code(401).send({error:'نشست خصوصی لازم است.'});});
@@ -168,9 +179,10 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
   return {app,core,port,origin};
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
-  const release=await claimOwner(join(root,'.data'));
+  const dataDirectory=resolve(process.env.NEGAHBAN_DATA??join(root,'.data'));
+  const release=await claimOwner(dataDirectory);
   let runtime:Awaited<ReturnType<typeof createServer>>;
-  try{runtime=await createServer();await runtime.app.listen({port:runtime.port,host:'127.0.0.1'});}catch(error){await release();throw error;}
+  try{runtime=await createServer();await runtime.app.listen({port:runtime.port,host:process.env.HOST||'127.0.0.1'});}catch(error){await release();throw error;}
   const {app,origin}=runtime;
   console.log(`Negahban: ${origin}\nPrivate dashboard access: npm run access\nCredentials are never printed.`);
   for(const s of ['SIGINT','SIGTERM']as const)process.on(s,()=>void app.close().then(release).then(()=>process.exit(0)));

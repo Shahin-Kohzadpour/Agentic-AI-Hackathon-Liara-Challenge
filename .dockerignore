@@ -1,0 +1,15 @@
+.git
+.data
+.env
+.env.*
+.github
+.npm
+.cache
+node_modules
+dist
+artifacts
+coverage
+docs
+submission
+tests
+*.log

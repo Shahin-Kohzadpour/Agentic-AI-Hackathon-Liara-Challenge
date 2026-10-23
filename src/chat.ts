@@ -27,9 +27,9 @@ export interface ConversationAgent {
 }
 
 export class CodexConversationAgent implements ConversationAgent {
-  constructor(private root: string) {}
+  constructor(private root: string, private data=join(root,'.data')) {}
   async respond(context: unknown) {
-    const cwd = join(this.root, ".data", "chat-workspace");
+    const cwd = join(this.data, "chat-workspace");
     await mkdir(cwd, { recursive: true, mode: 0o700 });
     const env = Object.fromEntries(
       [
@@ -105,7 +105,7 @@ response is short conversational prose, no markdown tables or headings. For oper
 export class Chat {
   constructor(
     private core: Core,
-    private agent: ConversationAgent = new CodexConversationAgent(core.root),
+    private agent: ConversationAgent = new CodexConversationAgent(core.root, core.data),
   ) {}
 
   initialize(recoverInterrupted = false) {

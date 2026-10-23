@@ -18,7 +18,7 @@ export class Core {
   readonly store:Store; readonly snapshots:Snapshots;readonly runner:IsolatedRunner;readonly liara:Liara;
   private agent:RepairAgent; private jobs=new Set<Promise<unknown>>();
   constructor(readonly root:string,readonly data=join(root,'.data'),agent?:RepairAgent){
-    this.store=new Store(data);this.snapshots=new Snapshots(join(data,'snapshots'),this.store);this.runner=new IsolatedRunner(root);this.liara=new Liara(root);this.agent=agent??new CodexRepairAgent(root);
+    this.store=new Store(data);this.snapshots=new Snapshots(join(data,'snapshots'),this.store);this.runner=new IsolatedRunner(root);this.liara=new Liara(root,data);this.agent=agent??new CodexRepairAgent(root,data);
   }
   async initialize(recoverInterrupted=false){
     let seed=this.store.get<Project>('projects','local');

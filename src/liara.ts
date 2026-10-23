@@ -5,7 +5,7 @@ import { id,messageOf,redact,validProject } from './security.ts';
 import type { Evidence,Verification } from './types.ts';
 
 export class Liara {
-  constructor(private root:string){}
+  constructor(private root:string,private data=join(root,'.data')){}
   configured(){return Boolean(process.env.LIARA_API_TOKEN);}
   async request(path:string,method='GET',body?:unknown):Promise<any>{
     if(!this.configured())throw new Error('کلید لیارا تنظیم نشده است. راهنمای اتصال را ببینید.');
@@ -81,7 +81,7 @@ export class Liara {
     const pkg=JSON.parse(await readFile(join(this.root,'node_modules/@liara/cli/package.json'),'utf8'));
     const bin=typeof pkg.bin==='string'?pkg.bin:Object.values(pkg.bin)[0] as string;
     const cli=join(this.root,'node_modules/@liara/cli',bin);
-    const credentialHome=join(this.root,'.data','cli',id('job'));
+    const credentialHome=join(this.data,'cli',id('job'));
     await mkdir(credentialHome,{recursive:true,mode:0o700});
     try{
       // The installed CLI reads this documented account format; no token in argv.

@@ -1,0 +1,11 @@
+{
+  "app": "negahban-sre-agent-2026",
+  "port": 3000,
+  "platform": "docker",
+  "disks": [
+    {
+      "name": "negahban-sre-agent-data",
+      "mountTo": "/data"
+    }
+  ]
+}

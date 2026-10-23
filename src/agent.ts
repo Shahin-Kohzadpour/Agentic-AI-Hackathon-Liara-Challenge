@@ -10,9 +10,9 @@ export type RepairResult=z.infer<typeof resultSchema>;
 export interface RepairAgent {repair(source:string,request:string,evidence:Evidence[],baseline:Verification,onProgress:(message:string)=>void):Promise<RepairResult&{threadId?:string}>;}
 
 export class CodexRepairAgent implements RepairAgent {
-  constructor(private root:string){}
+  constructor(private root:string,private data=join(root,'.data')){}
   async repair(source:string,request:string,evidence:Evidence[],baseline:Verification,onProgress:(message:string)=>void){
-    const cwd=join(this.root,'.data','agent-workspace');await mkdir(cwd,{recursive:true,mode:0o700});
+    const cwd=join(this.data,'agent-workspace');await mkdir(cwd,{recursive:true,mode:0o700});
     // No Liara credentials or server capability tokens are inherited by this subprocess.
     const env=Object.fromEntries(['PATH','HOME','CODEX_HOME','OPENAI_API_KEY','HTTPS_PROXY','HTTP_PROXY','NO_PROXY','SSL_CERT_FILE','NODE_EXTRA_CA_CERTS','XDG_RUNTIME_DIR'].flatMap(k=>process.env[k]?[[k,process.env[k]!]]:[]));
     const client=new Codex({env,codexPathOverride:join(this.root,'scripts/codex-bridge.mjs'),config:{features:{shell_tool:false,unified_exec:false,apps:false,plugins:false,multi_agent:false,browser_use:false,computer_use:false,view_image:false,image_generation:false,code_mode_host:false,sleep_tool:false,hooks:false}}});
