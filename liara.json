@@ -1,10 +1,10 @@
 {
-  "app": "negahban-sre-agent-2026",
+  "app": "liara-kavoshgaran",
   "port": 3000,
   "platform": "docker",
   "disks": [
     {
-      "name": "negahban-sre-agent-data",
+      "name": "liara-kavoshgaran-data",
       "mountTo": "/data"
     }
   ]
