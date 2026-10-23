@@ -68,6 +68,23 @@ test('HTTP boundary requires private human session and refuses MCP approval',asy
  }finally{await app.close();}
 });
 
+test('login errors are human readable, never a raw validation payload',async()=>{
+ const c=await setup();const {app}=await createServer({root,core:c,port:4397});const host={host:'127.0.0.1:4397'},origin='http://127.0.0.1:4397';
+ try{
+  const blank=await app.inject({method:'POST',url:'/api/session',headers:{...host,origin},payload:{key:'   '}});
+  assert.equal(blank.statusCode,400);
+  const message=blank.json().error as string;
+  assert.doesNotMatch(message,/\(\[|too_small|minimum|code/);
+  
+  const short=await app.inject({method:'POST',url:'/api/session',headers:{...host,origin},payload:{key:'123'}});
+  assert.equal(short.statusCode,403);assert.match(short.json().error,/کلید ورود معتبر نیست/);
+  
+  const human=(await readFile(join(c.data,'human-key'),'utf8')).trim();
+  const padded=await app.inject({method:'POST',url:'/api/session',headers:{...host,origin},payload:{key:`  ${human}\n`}});
+  assert.equal(padded.statusCode,200);assert.ok(padded.json().csrf);
+ }finally{await app.close();}
+});
+
 const freePort=async()=>new Promise<number>((ok,fail)=>{const s=net.createServer();s.once('error',fail);s.listen(0,'127.0.0.1',()=>{const p=(s.address() as net.AddressInfo).port;s.close(()=>ok(p));});});
 const waitForHttp=async(url:string)=>{for(let i=0;i<60;i++){try{const r=await fetch(url);if(r.ok)return true;}catch{}await new Promise(r=>setTimeout(r,100));}return false;};
 
@@ -120,6 +137,13 @@ test('faulty seed deploy completes only once the live 500 contract is observed',
  const done=await c.execute(a.id);
  assert.equal(done.status,'succeeded');assert.equal((done.result as any).verification.matched,true);assert.equal((done.result as any).verification.passed,false);
  assert.ok(probes>=4,'verification accepted the predecessor release too early');assert.equal(c.project(p.id).revision,2);
+});
+
+test('local faulty reset is recorded as an intentional defect, not a failed deployment',async()=>{
+ const c=await setup();const a=await c.resetProposal('local');assert.match(a.title,/معیوب/);assert.match(a.risk,/تمرین محلی/);c.decide(a.id,'approve');const done=await c.execute(a.id);
+ assert.equal(done.status,'succeeded');assert.equal((done.result as any).verification.matched,true);assert.equal((done.result as any).verification.passed,false);
+ const live=await c.runner.invoke(c.snapshots.path(c.project('local').currentSnapshot),{items:[{price:100,quantity:2}]});
+ assert.equal(live.status,500);
 });
 
 test('live reset is explicitly labeled as an intentional faulty deployment',async()=>{

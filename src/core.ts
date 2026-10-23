@@ -168,18 +168,23 @@ export class Core {
     }catch(e){a.status='failed';a.error=messageOf(e);this.store.put('actions',a);if(run){run.error=a.error;this.event(run,'failed',a.error);}throw new Error(a.error);}
     finally{this.store.unlock(p.id,a.id);}
   }
-  async verifyLocalHttp(p:Project):Promise<Verification>{
+  async verifyLocalHttp(p:Project,expectation:'healthy'|'faulty'='healthy'):Promise<Verification>{
     // The public local demo route uses this same isolated invocation path.
     const start=Date.now();let actual:unknown;
     if(this.localOrigin){const r=await fetch(`${this.localOrigin}/demo/api/summary`,{method:'POST',headers:{'content-type':'application/json',origin:this.localOrigin},body:JSON.stringify(failingInput),signal:AbortSignal.timeout(10000)});actual={status:r.status,body:await r.json()};}
     else actual=await this.runner.invoke(this.snapshots.path(p.currentSnapshot),failingInput);
     const actualResult=actual as {status:number;body:unknown};
-    const expected={status:200,body:{subtotal:200,discount:0,total:200}};
+    const expected=expectation==='faulty'?{status:500}:{status:200,body:{subtotal:200,discount:0,total:200}};
     const contract=await this.runner.verify(this.snapshots.path(p.currentSnapshot));
-    return {passed:actualResult.status===200&&JSON.stringify(actualResult.body)===JSON.stringify(expected.body)&&contract.passed,checks:[{name:'اجرای دوبارهٔ درخواست اصلی',passed:actualResult.status===200&&JSON.stringify(actualResult.body)===JSON.stringify(expected.body),expected,actual},...contract.checks],durationMs:Date.now()-start,source:this.localOrigin?'http':'isolated-contract-tests'};
+    const matches=expectation==='faulty'
+      ? actualResult.status===500
+      : actualResult.status===200&&JSON.stringify(actualResult.body)===JSON.stringify(expected.body)&&contract.passed;
+    // A deliberately faulty seed is a successful demonstration of the defect, not a recovery:
+    // it is reported with matched=true and passed=false, exactly like the live path.
+    return {passed:expectation==='healthy'&&matches,matched:matches,checks:[{name:expectation==='faulty'?'بازتولید خطای عمدی روی نسخهٔ معیوب':'اجرای دوبارهٔ درخواست اصلی',passed:matches,expected,actual},...contract.checks],durationMs:Date.now()-start,source:this.localOrigin?'http':'isolated-contract-tests'};
   }
   async verifyPublished(p:Project,run?:Incident,expectation:'healthy'|'faulty'='healthy'):Promise<Verification>{
-    if(p.mode==='local')return this.verifyLocalHttp(p);
+    if(p.mode==='local')return this.verifyLocalHttp(p,expectation);
     const start=Date.now();
     let consecutive=0,result:Verification|undefined;
     // The edge can keep serving the previous release for tens of seconds after READY, so the
@@ -218,12 +223,12 @@ export class Core {
     const snapshot=await this.snapshots.seed(join(this.root,'fixtures','shop'));
     const action=await this.prepareAction(projectId,'deploy',snapshot.id);
     const p=this.project(projectId);
-    if(p.mode==='liara'){
-      // A reset is intentionally destructive: label it explicitly before a human can approve it.
-      action.title='بازنشانی نمونهٔ زنده به نسخهٔ معیوب';
-      action.risk='این عملیات عمداً نسخهٔ دارای خطای ۵۰۰ را روی سرویس واقعی منتشر می‌کند و تا اصلاح بعدی، درخواست بدون تخفیف را خراب می‌کند.';
-      this.store.put('actions',action);
-    }
+    // A reset is intentionally destructive in both modes: label it explicitly before a human can approve it.
+    action.title=p.mode==='liara'?'بازنشانی نمونهٔ زنده به نسخهٔ معیوب':'بازنشانی نمونهٔ محلی به نسخهٔ معیوب';
+    action.risk=p.mode==='liara'
+      ?'این عملیات عمداً نسخهٔ دارای خطای ۵۰۰ را روی سرویس واقعی منتشر می‌کند و تا اصلاح بعدی، درخواست بدون تخفیف را خراب می‌کند.'
+      :'این عملیات فقط منبع تمرین محلی را به نسخهٔ دارای خطای ۵۰۰ برمی‌گرداند؛ هزینه یا تغییر ابری ندارد.';
+    this.store.put('actions',action);
     return action;
   }
   async rollbackProposal(actionId:string){const previous=this.action(actionId);const verified=await this.runner.verify(this.snapshots.path(previous.baseSnapshot));if(!verified.passed)throw new Error('منبع قبلی از آزمون سلامت مستقل عبور نمی‌کند؛ به‌عنوان نسخهٔ سالم پیشنهاد نمی‌شود.');return this.prepareAction(previous.projectId,'rollback',previous.baseSnapshot);}

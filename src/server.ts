@@ -40,12 +40,14 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
   app.setErrorHandler((error,request,reply)=>{
     const err=error as {statusCode?:number;code?:string};
     const status=error instanceof z.ZodError?400:(typeof err.statusCode==='number'&&err.statusCode>=400&&err.statusCode<600?err.statusCode:400);
-    const message=err.code==='FST_ERR_CTP_BODY_TOO_LARGE'?'حجم درخواست بیش از حد مجاز است.':err.code==='FST_ERR_CTP_INVALID_JSON_BODY'?'بدنهٔ درخواست JSON معتبر نیست.':err.code==='FST_ERR_CTP_INVALID_MEDIA_TYPE'?'نوع محتوای درخواست پشتیبانی نمی‌شود.':messageOf(error);
+    // A raw ZodError message is a JSON issue list; never show it in the UI or to a client.
+    const message=error instanceof z.ZodError?'ورودی درخواست معتبر نیست؛ مقدارها را بررسی کنید.':err.code==='FST_ERR_CTP_BODY_TOO_LARGE'?'حجم درخواست بیش از حد مجاز است.':err.code==='FST_ERR_CTP_INVALID_JSON_BODY'?'بدنهٔ درخواست JSON معتبر نیست.':err.code==='FST_ERR_CTP_INVALID_MEDIA_TYPE'?'نوع محتوای درخواست پشتیبانی نمی‌شود.':messageOf(error);
     return reply.code(status).send({error:message});
   });
   app.get('/api/health',async()=>({ok:true,service:'negahban'}));
   app.post('/api/session',async(request,reply)=>{
-    const input=z.object({key:z.string().min(10).max(200)}).parse(request.body);
+    // No length rule of its own: a short or wrong key is simply not the key.
+    const input=z.object({key:z.string().trim().min(1).max(200)}).parse(request.body);
     if(!equals(input.key,humanKey))return reply.code(403).send({error:'کلید ورود معتبر نیست.'});
     const token=id('session'),csrf=id('csrf');sessions.set(token,{csrf,expires:Date.now()+8*3600_000});
     reply.header('Set-Cookie',`negahban=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`);

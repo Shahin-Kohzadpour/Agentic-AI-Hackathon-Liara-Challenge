@@ -8,6 +8,28 @@ await mkdir('artifacts',{recursive:true});
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox'],ignoreDefaultArgs:['--disable-dev-shm-usage']});
 let repairInvoked=false,preparedRepairUsed=false;
 try{
+ // The gate is checked in its own context: a session cookie or a hash-only navigation would hide the locked state.
+ let gateEmpty=true,gateShort=true,shortKeyRequests=0,blockedShortRequests=0,gateLogin=false;
+ {
+  const context=await browser.newContext();const gate=await context.newPage();
+  gate.on('request',request=>{if(request.url().endsWith('/api/session')&&request.method()==='POST')shortKeyRequests++;});
+  await gate.goto(`${origin}/`);await gate.getByRole('heading',{name:'فضای خصوصی نگهبان'}).waitFor();
+  const submit=gate.getByRole('button',{name:/ورود به فضای کار/});
+  gateEmpty=await submit.isDisabled();assert.equal(gateEmpty,true,'an empty key must disable login');
+  assert.match(await gate.locator('#key-hint').innerText(),/کلید کامل/);
+  await gate.locator('#key').fill('abcd');
+  gateShort=await submit.isDisabled();assert.equal(gateShort,true,'a short key must disable login');
+  assert.match(await gate.locator('#key-hint').innerText(),/کوتاه/);
+  assert.equal(await gate.locator('#key').getAttribute('aria-invalid'),'true');
+  await gate.locator('#key').press('Enter');await gate.waitForTimeout(600);
+  blockedShortRequests=shortKeyRequests;
+  assert.equal(blockedShortRequests,0,'a short key must never reach /api/session');
+  assert.equal(await gate.locator('[role=alert]').count(),0,'a short key must not surface a server error');
+  await gate.locator('#key').fill(`  ${key}  `);
+  assert.equal(await submit.isDisabled(),false,'the complete key must enable login');
+  await submit.click();await gate.getByRole('heading',{name:'از خطا تا اطمینان.'}).waitFor();
+  gateLogin=true;await context.close();
+ }
  const page=await browser.newPage({viewport:{width:1440,height:1080},deviceScaleFactor:1});
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(`${origin}/#key=${key}`);await page.getByRole('heading',{name:'از خطا تا اطمینان.'}).waitFor();
@@ -48,6 +70,6 @@ try{
  await page.getByRole('button',{name:'گزارش بازیابی',exact:true}).click();
  await page.screenshot({path:'artifacts/report-desktop.png',fullPage:true});
  assert.deepEqual(errors,[]);
- await writeFile('artifacts/browser-check.json',JSON.stringify({at:new Date().toISOString(),before,after,pageErrors:errors,desktopOverflow:false,mobileOverflow:false,repairInvoked,preparedRepairUsed,repair:repairInvoked?'Actual Codex SDK':preparedRepairUsed?'Existing Codex proposal exercised':'No repair invoked: the local sample was already recovered',deployment:'local rehearsal only'},null,2));
+ await writeFile('artifacts/browser-check.json',JSON.stringify({at:new Date().toISOString(),before,after,pageErrors:errors,desktopOverflow:false,mobileOverflow:false,loginGate:{emptyDisabled:gateEmpty,shortDisabled:gateShort,shortKeyRequests:blockedShortRequests,completeKeyAccepted:gateLogin},repairInvoked,preparedRepairUsed,repair:repairInvoked?'Actual Codex SDK':preparedRepairUsed?'Existing Codex proposal exercised':'No repair invoked: the local sample was already recovered',deployment:'local rehearsal only'},null,2));
  console.log(`Browser UI, desktop/mobile layout, and recovered response passed. Repair this run: ${repairInvoked?'actual Codex SDK':preparedRepairUsed?'existing proposal':'not needed; already recovered'}.`);
 }finally{await browser.close();}
