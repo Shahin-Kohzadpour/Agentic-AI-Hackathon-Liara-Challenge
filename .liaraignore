@@ -8,3 +8,5 @@ coverage
 docs
 submission
 tests
+# Liara's default ignore list excludes every file named liara.json; this fixture is runtime input.
+!fixtures/shop/liara.json
