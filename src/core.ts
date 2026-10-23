@@ -38,7 +38,7 @@ export class Core {
   incident(runId:string){const r=this.store.get<Incident>('incidents',runId);if(!r)throw new Error('رخداد پیدا نشد.');return r;}
   action(actionId:string){const a=this.store.get<ActionPlan>('actions',actionId);if(!a)throw new Error('برنامهٔ عملیات پیدا نشد.');return a;}
   save(run:Incident){run.updatedAt=new Date().toISOString();this.store.put('incidents',run);}
-  state(){return {projects:this.store.list<Project>('projects'),incidents:this.store.list<Incident>('incidents'),actions:this.store.list<ActionPlan>('actions'),events:this.store.events(),capabilities:{liaraConfigured:this.liara.configured(),teamConfigured:Boolean(process.env.LIARA_TEAM_ID),agent:'Codex',scope:'registered-node-demo',api:'https://developers.liara.ir/',localIsolation:'bubblewrap: no network, read-only source, no credentials'}};}
+  state(){return {projects:this.store.list<Project>('projects'),incidents:this.store.list<Incident>('incidents'),actions:this.store.list<ActionPlan>('actions'),events:this.store.recentEvents(),capabilities:{liaraConfigured:this.liara.configured(),teamConfigured:Boolean(process.env.LIARA_TEAM_ID),agent:'Codex',scope:'registered-node-demo',api:'https://developers.liara.ir/',localIsolation:'bubblewrap: no network, read-only source, no credentials'}};}
   event(run:Incident,status:RunStatus,message:string){run.status=status;this.save(run);this.store.event(run.id,status,message);}
   track(job:Promise<unknown>){this.jobs.add(job);void job.finally(()=>this.jobs.delete(job)).catch(()=>{});}
   async settle(){await Promise.allSettled([...this.jobs]);}

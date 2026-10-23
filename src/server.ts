@@ -3,17 +3,23 @@ import fastifyStatic from '@fastify/static';
 import { readFile,writeFile,access } from 'node:fs/promises';
 import { resolve,join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { ServerResponse } from 'node:http';
 import { z } from 'zod';
 import { Core,failingInput } from './core.ts';
 import { LiveOperator } from './live.ts';
 import { id,equals,messageOf } from './security.ts';
 import { claimOwner } from './owner.ts';
+import { Chat, type ConversationAgent } from './chat.ts';
 
 const root=resolve(fileURLToPath(new URL('..',import.meta.url)));
-export async function createServer(options:{root?:string;data?:string;core?:Core;port?:number}={}){
+export async function createServer(options:{root?:string;data?:string;core?:Core;port?:number;chatAgent?:ConversationAgent}={}){
   const app=Fastify({logger:false,bodyLimit:40000});
+  const streams=new Set<ServerResponse>();
+  const trackStream=(response:ServerResponse)=>{streams.add(response);response.once('close',()=>streams.delete(response));};
+  app.addHook('preClose',async()=>{for(const response of streams)response.end();});
   const directory=options.root??root;
   const core=options.core??new Core(directory,options.data);await core.initialize(!options.core);
+  const chat=new Chat(core,options.chatAgent);chat.initialize(!options.core);
   const port=options.port??Number(process.env.PORT||4317);
   const origin=`http://127.0.0.1:${port}`;
   core.localOrigin=origin;
@@ -54,38 +60,49 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
     return {csrf};
   });
   app.get('/api/session',async(request,reply)=>{const s=sessionOf(request);return s?{csrf:s.csrf}:reply.code(401).send({error:'نشست خصوصی لازم است.'});});
-  app.get('/api/state',async()=>{const state=core.state();return {...state,capabilities:{...state.capabilities,liveConsole:Boolean(process.env.LIARA_CONSOLE_EMAIL&&process.env.LIARA_CONSOLE_PASSWORD)}};});
+  app.get('/api/state',async()=>{const state=core.state();return {...state,...chat.state(),capabilities:{...state.capabilities,liveConsole:Boolean(process.env.LIARA_CONSOLE_EMAIL&&process.env.LIARA_CONSOLE_PASSWORD)}};});
+  app.post('/api/conversations',async(request,reply)=>{
+    const {projectId}=z.object({projectId:z.string()}).parse(request.body);
+    return reply.code(201).send(chat.create(projectId));
+  });
+  app.post('/api/conversations/:id/messages',async(request,reply)=>{
+    const {id:conversationId}=z.object({id:z.string()}).parse(request.params);
+    const {content,requestId}=z.object({content:z.string().trim().min(1).max(2000),requestId:z.string().regex(/^[a-zA-Z0-9_-]{8,80}$/)}).parse(request.body);
+    return reply.code(202).send(chat.send(conversationId,content,requestId));
+  });
   app.get('/api/live/state',async()=>({live:live.snapshot(),configured:{console:Boolean(process.env.LIARA_CONSOLE_EMAIL&&process.env.LIARA_CONSOLE_PASSWORD),browser:process.env.LIVE_CHROMIUM||'/usr/bin/chromium'}}));
   app.post('/api/live/start',async(request,reply)=>{
-    const {projectId}=z.object({projectId:z.string()}).parse(request.body);
+    const {projectId,conversationId}=z.object({projectId:z.string(),conversationId:z.string().optional()}).parse(request.body);
     const project=core.project(projectId);
+    const conversation=conversationId?chat.conversation(conversationId):chat.create(projectId);
+    if(conversation.projectId!==projectId)throw new Error('پروژهٔ گفتگو با جلسهٔ زنده مطابقت ندارد.');
     const snapshot=await live.start(projectId,{onReproduced:async()=>{
       const latest=core.state().incidents.find(run=>run.projectId===projectId);
       // Reuse only an incident that is still moving; a resolved or rejected one is history.
-      if(latest&&['collecting','patching','testing','awaiting_approval','deploying','verifying'].includes(latest.status))return latest.id;
+      if(latest&&['collecting','patching','testing','awaiting_approval','deploying','verifying'].includes(latest.status)){chat.linkIncident(conversation.id,latest);return latest.id;}
       const text='سایت باز می‌شود، اما خلاصهٔ سفارش خطای ۵۰۰ دارد. علت را پیدا کن و اصلاح را برای تأیید من آماده کن.';
-      try{return (await core.startIncident(projectId,text)).id;}catch(error){core.store.event('live','failed',messageOf(error));return undefined;}
+      try{const run=await core.startIncident(projectId,text);chat.linkIncident(conversation.id,run);return run.id;}catch(error){core.store.event('live','failed',messageOf(error));return undefined;}
     }});
-    return reply.code(202).send({live:snapshot});
+    return reply.code(202).send({live:snapshot,conversationId:conversation.id});
   });
   app.post('/api/live/stop',async()=>({live:await live.stop()}));
   app.post('/api/live/verify',async()=>({live:await live.verify()}));
   app.get('/api/live/stream',async(request,reply)=>{
     if(!sessionOf(request))return reply.code(401).send({error:'نشست خصوصی لازم است.'});
     if(liveStreams>=4)return reply.code(429).send({error:'تعداد نمایش زندهٔ هم‌زمان بیش از حد است.'});
-    reply.hijack();liveStreams++;
+    reply.hijack();trackStream(reply.raw);liveStreams++;
     reply.raw.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-store','connection':'keep-alive','X-Content-Type-Options':'nosniff'});
     reply.raw.write(': live\n\n');
-    const send=(event:string,payload:unknown)=>reply.raw.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`);
+    const send=(event:string,payload:unknown)=>{if(!reply.raw.writableEnded)reply.raw.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`);};
     const unsubscribe=live.subscribe(send);
-    const heartbeat=setInterval(()=>reply.raw.write(': heartbeat\n\n'),12000);
+    const heartbeat=setInterval(()=>{if(!reply.raw.writableEnded)reply.raw.write(': heartbeat\n\n');},12000);
     request.raw.on('close',()=>{clearInterval(heartbeat);unsubscribe();liveStreams--;});
   });
   app.get('/api/live/mjpeg',async(request,reply)=>{
     // Native multipart frames keep the viewer stable; the browser replaces one image instead of decoding a new data URL per frame.
     if(!sessionOf(request))return reply.code(401).send({error:'نشست خصوصی لازم است.'});
     if(liveStreams>=4)return reply.code(429).send({error:'تعداد نمایش زندهٔ هم‌زمان بیش از حد است.'});
-    reply.hijack();liveStreams++;let closed=false;
+    reply.hijack();trackStream(reply.raw);liveStreams++;let closed=false;
     reply.raw.writeHead(200,{'content-type':'multipart/x-mixed-replace; boundary=frame','cache-control':'no-store','connection':'close','X-Content-Type-Options':'nosniff'});
     const write=(jpeg:Buffer)=>{if(closed||reply.raw.writableEnded)return;try{reply.raw.write(`--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.length}\r\n\r\n`);reply.raw.write(jpeg);reply.raw.write('\r\n');}catch{closed=true;}};
     const unsubscribe=live.subscribeFrames(write);
@@ -117,18 +134,18 @@ export async function createServer(options:{root?:string;data?:string;core?:Core
     if(input.name==='action_execute')return core.execute(z.string().parse(a.actionId));
     return core.incident(z.string().parse(a.runId));
   });
-  app.get('/api/reports/:id',async(request,reply)=>{const {id:runId}=z.object({id:z.string()}).parse(request.params);const run=core.incident(runId);reply.header('Content-Disposition',`attachment; filename="incident-${runId}.json"`);return {version:1,generatedAt:new Date().toISOString(),project:core.project(run.projectId),incident:run,action:run.actionId?core.action(run.actionId):null,events:core.store.events().filter(e=>e.runId===runId)};});
+  app.get('/api/reports/:id',async(request,reply)=>{const {id:runId}=z.object({id:z.string()}).parse(request.params);const run=core.incident(runId);reply.header('Content-Disposition',`attachment; filename="incident-${runId}.json"`);return {version:1,generatedAt:new Date().toISOString(),project:core.project(run.projectId),incident:run,action:run.actionId?core.action(run.actionId):null,events:core.store.eventsForRun(runId)};});
   let connections=0;
   app.get('/api/events',async(request,reply)=>{
     // Event streaming is a dashboard capability; a tool bearer must not consume the human UI's slots.
     if(!sessionOf(request))return reply.code(401).send({error:'نشست خصوصی لازم است.'});
     if(connections>=12)return reply.code(429).send({error:'تعداد اتصال‌های زنده بیش از حد است.'});
-    reply.hijack();reply.raw.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-store','connection':'keep-alive','X-Content-Type-Options':'nosniff'});connections++;
+    reply.hijack();trackStream(reply.raw);reply.raw.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-store','connection':'keep-alive','X-Content-Type-Options':'nosniff'});connections++;
     // Flush headers immediately; otherwise a quiet stream sends nothing until the 12s heartbeat.
     reply.raw.write(': connected\n\n');
     let last=Number(request.headers['last-event-id']||0);if(!Number.isFinite(last))last=0;
-    const tick=()=>{const events=core.store.events(last);for(const e of events){reply.raw.write(`id: ${e.id}\nevent: update\ndata: ${JSON.stringify(e)}\n\n`);last=e.id;}};
-    tick();const timer=setInterval(tick,700);const heartbeat=setInterval(()=>reply.raw.write(': heartbeat\n\n'),12000);
+    const tick=()=>{if(reply.raw.writableEnded)return;const events=core.store.events(last);for(const e of events){reply.raw.write(`id: ${e.id}\nevent: update\ndata: ${JSON.stringify(e)}\n\n`);last=e.id;}};
+    tick();const timer=setInterval(tick,700);const heartbeat=setInterval(()=>{if(!reply.raw.writableEnded)reply.raw.write(': heartbeat\n\n');},12000);
     request.raw.on('close',()=>{clearInterval(timer);clearInterval(heartbeat);connections--;});
   });
   app.get('/demo/healthz',async request=>{

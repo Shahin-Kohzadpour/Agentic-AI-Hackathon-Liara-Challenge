@@ -38,4 +38,10 @@ export class Store {
   events(after=0):RunEvent[] {
     return (this.db.prepare('SELECT id,run_id as runId,at,status,message FROM events WHERE id>? ORDER BY id LIMIT 250').all(after) as unknown) as RunEvent[];
   }
+  recentEvents():RunEvent[] {
+    return (this.db.prepare('SELECT id,run_id as runId,at,status,message FROM events ORDER BY id DESC LIMIT 250').all() as unknown as RunEvent[]).reverse();
+  }
+  eventsForRun(runId:string):RunEvent[] {
+    return this.db.prepare('SELECT id,run_id as runId,at,status,message FROM events WHERE run_id=? ORDER BY id').all(runId) as unknown as RunEvent[];
+  }
 }
